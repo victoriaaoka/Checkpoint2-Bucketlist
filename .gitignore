@@ -1,1 +1,6 @@
-#Files to ignore
+__pycache__/
+*.py[cod]
+*$py.class
+*.cache
+*.env
+*.DS_Store
