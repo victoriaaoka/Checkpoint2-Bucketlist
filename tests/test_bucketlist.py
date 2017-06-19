@@ -34,11 +34,15 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn('Vacation', str(res.data))
 
+    def test_api_getting_bucketlists_when_none_exists(self):
+        res = self.client().get('/bucketlists/')
+        self.assertEqual(res.status_code, 400)
+
     def test_api_can_get_bucketlist_by_id(self):
         """Test that the API can get a single bucketlist by id."""
         resp = self.client().post('/bucketlists/', data=self.bucketlist)
         self.assertEqual(resp.status_code, 201)
-        result_in_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        result_in_json = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
             '/bucketlists/{}'.format(result_in_json['id']))
         self.assertEqual(result.status_code, 200)
@@ -59,7 +63,7 @@ class BucketlistTestCase(unittest.TestCase):
         result = self.client().get('/bucketlists/1')
         self.assertIn('Go for adventure', str(result.data))
 
-    def test_bucketlist_deletion(self):
+    def test_successful_bucketlist_deletion(self):
         """Test that the API can delete an existing bucketlist."""
         resp = self.client().post(
             '/bucketlists/',
@@ -69,6 +73,10 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         result = self.client().get('/bucketlists/1')
         self.assertEqual(result.status_code, 404)
+
+    def test_delete_bucketlist_that_does_not_exist(self):
+        resp = self.client().delete('/bucketlists/10')
+        self.assertEqual(resp.status_code, 404)
 
     def tearDown(self):
         """reset all initialized variables."""
