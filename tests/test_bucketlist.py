@@ -36,7 +36,7 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_api_getting_bucketlists_when_none_exists(self):
         res = self.client().get('/bucketlists/')
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 404)
 
     def test_api_can_get_bucketlist_by_id(self):
         """Test that the API can get a single bucketlist by id."""
