@@ -1,4 +1,7 @@
 import os
+import jwt
+from flask_bcrypt import Bcrypt
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
@@ -14,17 +17,59 @@ class User(db.Model):
     backetlists = db.relationship(
         'Bucketlist', order_by='Bucketlist.id', cascade='all, delete-orphan')
 
-    def __init__(self, username):
-        'initialize with username.'
+    def __init__(self, username,email, password):
+        """
+        Initialize with username and password.
+        """
         self.username = username
+        self.email = email
+        self.password = Bcrypt().generate_password_hash(password).decode()
+
+    def password_is_valid(self, password):
+        """
+        Checks the password against it's hash to validates the user's password
+        """
+        return Bcrypt().check_password_hash(self.password, password)
 
     def save(self):
         db.session.add(self)
         db.session.commit()
 
+    def generate_token(self, user_id):
+        """
+        Generates the token.
+        """
+
+        try:
+            """ set up a payload with an expiration time"""
+            payload = {
+                'exp': datetime.utcnow() + timedelta(minutes=5),
+                'iat': datetime.utcnow(),
+                'sub': user_id
+            }
+            # create the byte string token using the payload and the SECRET key
+            jwt_string = jwt.encode(
+                payload,
+                current_app.config.get('SECRET'),
+                algorithm='HS256'
+            )
+            return jwt_string
+
+        except Exception as e:
+            # return an error in string format if an exception occurs
+            return str(e)
+
     @staticmethod
-    def get_all():
-        return User.query.all()
+    def decode_token(token):
+        """Decodes the access token from the Authorization header."""
+        try:
+            # Decode the token using our SECRET variable
+            payload = jwt.decode(token, current_app.config.get('SECRET'))
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return "Expired token. Please login to get a new token"
+        except jwt.InvalidTokenError:
+            return "Invalid token. Please register or login"
 
     def delete(self):
         db.session.delete(self)
@@ -48,7 +93,7 @@ class Bucketlist(db.Model):
         cascade='all, delete-orphan')
 
     def __init__(self, name):
-        'initialize with name.'
+        """initialize with name."""
         self.name = name
 
     def save(self):
@@ -57,9 +102,15 @@ class Bucketlist(db.Model):
 
     @staticmethod
     def get_all():
-        return Bucketlist.query.all()
+        """
+        Gets the bucketlists that belong to a aparticular user.
+        """
+        return Bucketlist.query.filter_by(User.id)
 
     def delete(self):
+        """
+        Deletes a particular bucketlist.
+        """
         db.session.delete(self)
         db.session.commit()
 
