@@ -56,7 +56,6 @@ class User(db.Model):
             return jwt_string
 
         except Exception as e:
-            # return an error in string format if an exception occurs
             return str(e)
 
     @staticmethod
@@ -134,22 +133,21 @@ class BucketlistItem(db.Model):
         Bucketlist.id), nullable=False)
 
     def __init__(self, name):
-        'Initialize with name.'
+        """Initialize with name."""
         self.name = name
-        self.bucketlist_id = bucketlist_id
 
     def save(self):
-        'Save a new/edited bucketlist item'
+        """Save a new/edited bucketlist item"""
         db.session.add(self)
         db.session.commit()
 
     @staticmethod
-    def get_all(bucketlist_id):
-        'Retrieve all the bucketlists items in a given bucketlist'
-        return BucketListItem.query.filter_by(bucketlist_id=bucketlist_id)
+    def get_all(iteid):
+        """Retrieve all the bucketlists items in a given bucketlist"""
+        return BucketListItem.query.filter_by(BucketListItem.id)
 
     def delete(self):
-        'Delete a bucketlist item'
+        """Delete a bucketlist item"""
         db.session.delete(self)
         db.session.commit()
 

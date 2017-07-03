@@ -2,8 +2,8 @@ import os
 from flask_script import Manager
 import unittest
 from flask_migrate import Migrate, MigrateCommand
-from my_app import db, create_app
 from my_app import models
+from my_app import db, create_app
 
 
 app = create_app(config_name=os.getenv('APP_SETTINGS'))
