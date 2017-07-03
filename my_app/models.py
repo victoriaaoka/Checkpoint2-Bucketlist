@@ -132,10 +132,13 @@ class BucketlistItem(db.Model):
     bucketlist_id = db.Column(db.Integer, db.ForeignKey(
         Bucketlist.id), nullable=False)
 
+<<<<<<< HEAD
     def __init__(self, name, bucketlist_id):
+=======
+    def __init__(self, name):
+>>>>>>> d3e88accb16acddc0c18794e342bc23c89284613
         """Initialize with name."""
         self.name = name
-        self.bucketlist_id = bucketlist_id
 
     def save(self):
         """Save a new/edited bucketlist item"""
@@ -143,7 +146,11 @@ class BucketlistItem(db.Model):
         db.session.commit()
 
     @staticmethod
+<<<<<<< HEAD
     def get_all():
+=======
+    def get_all(iteid):
+>>>>>>> d3e88accb16acddc0c18794e342bc23c89284613
         """Retrieve all the bucketlists items in a given bucketlist"""
         return BucketListItem.query.filter_by(BucketListItem.id)
 
