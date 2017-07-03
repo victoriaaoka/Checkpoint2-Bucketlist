@@ -21,9 +21,16 @@ class RegistrationView(MethodView):
                 password = post_data['password']
                 user = User(username=username, email=email, password=password)
                 user.save()
+                user_details = {"username": post_data['username'],
+                                            "email":  post_data['email'],
+                                            "password": post_data['password'],
+                                            "id": user.id
+                                             }
                 response = {
                     'message': 'You registered successfully!'
                 }
+                response.update(user_details)
+
                 return make_response(jsonify(response)), 201
 
             except Exception as e:
