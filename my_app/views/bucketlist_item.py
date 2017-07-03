@@ -5,68 +5,111 @@ import decorator
 from my_app.models import Bucketlist, BucketlistItem
 from . import bucketlist_item_blueprint
 
-def bucketlistitems():
-    if request.method == "POST":
-        name = str(request.data.get('name', ''))
-        if name:
-            item = BucketlistItem(name=name)
-            item.save()
-            response = jsonify({
-                'id': item.id,
-                'name': item.name,
-                'date_created': item.date_created,
-                'date_modified': item.date_modified,
-                'bucketlist_id': Bucketlist.id
-            })
-            response.status_code = 201
-            return response
-    else:
-        bucketlist_items = BucketlistItems.get_all()
-        results = []
 
-        for item in bucketlist_items:
-            obj = {
-                'id': item.id,
-                'name': item.name,
-                'date_created': item.date_created,
-                'date_modified': item.date_modified
-            }
-            results.append(obj)
-        response = jsonify(results)
-        response.status_code = 200
-        return response
+class BucketlistItemView(MethodView):
 
-# @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-# def bucketlist_manipulation(id, **kwargs):
-#     bucketlist = Bucketlist.query.filter_by(id=id).first()
-#     if not bucketlist:
-#         abort(404)
-#         return make_response(jsonify(response)), 404
+    def post(self, id):
+        bucketlist = Bucketlist.query.filter_by(id=id).first()
+        if not bucketlist:
+            abort(404)
+        else:
+            name = str(request.data.get('name'))
+            if name:
+                item = BucketlistItem(name=name, bucketlist_id=id)
+                item.save()
+                response = {
+                    'id': item.id,
+                    'name': item.name,
+                    'date_created': item.date_created,
+                    'date_modified': item.date_modified,
+                    'bucketlist_id': Bucketlist.id
+                }
+                response = {"message": "The bucketlist item has been created!"}
+                return make_response(jsonify(response)), 201
+            else:
+                response = {"message": "Please enter bucketlist item name."}
+                return make_response(jsonify(response)), 400
 
-#     if request.method == 'DELETE':
-#         bucketlist.delete()
-#         return {
-#         "message": "bucketlist {} deleted successfully".format(bucketlist.id)
-#      }, 200
+    def get(self, id):
+            bucketlist_items = BucketlistItem.query.filter_by(bucketlist_id=id).all()
+            if bucketlist_items:
+                results = []
+                count = 1
+                for item in bucketlist_items:
+                    obj = {
+                        'id': count,
+                        'name': item.name,
+                        'date_created': item.date_created,
+                        'date_modified': item.date_modified
+                    }
+                    results.append(obj)
+                    count += 1
+                response = jsonify(results)
+                return make_response(response), 200
+            else:
+                response = {"message": "You do not have any bucketlists items."}
+                return make_response(jsonify(response)), 404
 
-#     elif request.method == 'PUT':
-#         name = str(request.data.get('name', ''))
-#         bucketlist.name = name
-#         bucketlist.save()
-#         response = jsonify({
-#             'id': bucketlist.id,
-#             'name': bucketlist.name,
-#             'date_created': bucketlist.date_created,
-#             'date_modified': bucketlist.date_modified
-#         })
-#         response.status_code = 200
-#         return response
-#     else:
-#         response = jsonify({
-#             'id': bucketlist.id,
-#             'name': bucketlist.name,
-#             'date_created': bucketlist.date_created,
-#             'date_modified': bucketlist.date_modified
-#         })
-#         response.status_code = 200
-#         return response
+
+class BucketlistItemManipulationView(MethodView):
+        def put(self, id, item_id):
+            item = BucketlistItem.query.filter_by(
+                bucketlist_id=id, id=item_id).first()
+
+            if item:
+                name = str(request.data.get('name', ''))
+                item.name = name
+                item.save()
+                response = {
+                        'id': item.id,
+                        'name': item.name,
+                        'date_created': item.date_created,
+                        'date_modified': item.date_modified
+                }
+                response .update({"message": "Bucketlist item updated successfully."})
+                return make_response(jsonify(response)), 200
+            else:
+                abort(404)
+                response = {"message": "The bucketlist does not exist."}
+                return make_response(jsonify(response)), 404
+
+        def get(self, id, item_id):
+            items = BucketlistItem.query.filter_by(bucketlist_id=id).all()
+            item = BucketlistItem.query.filter_by(id=item_id).first()
+            the_item = items[int(item_id) - 1]
+            #the_item = [item for item in items if item.id == item_id][0]
+            if the_item:
+                results = {
+                    'id':  item_id ,
+                    'name': the_item.name,
+                    'date_created': the_item.date_created,
+                    'date_modified': the_item.date_modified
+                }
+                response = jsonify(results)
+                return make_response(response), 200
+
+            else:
+                response = {"message": "You do not have any bucketlists items."}
+                return make_response(jsonify(response)), 404
+
+        def delete(self, id, item_id):
+            item = BucketlistItem.query.filter_by(bucketlist_id=id, id=item_id).first()
+            if item:
+                item.delete()
+                response = {"message": "Bucketlist item deleted successfully."}
+                return make_response(jsonify(response)), 200
+            else:
+                abort(404)
+                response = {"message": "The bucketlist item does not exist."}
+                return make_response(jsonify(response)), 404
+
+ # API resource
+bucketlist_item_view = BucketlistItemView.as_view("bucketlist_item_view")
+manipulation_view = BucketlistItemManipulationView.as_view("manipulation_view")
+
+# Rule for bucketlist with blueprint
+bucketlist_item_blueprint.add_url_rule("/bucketlists/<int:id>/items/", view_func=bucketlist_item_view,
+                                  methods=["POST", "GET"])
+bucketlist_item_blueprint.add_url_rule(
+    "/bucketlists/<int:id>/items/<int:item_id>", view_func=manipulation_view,
+    methods=["PUT", "GET", "DELETE"])
