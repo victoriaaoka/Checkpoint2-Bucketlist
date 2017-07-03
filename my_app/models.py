@@ -56,7 +56,6 @@ class User(db.Model):
             return jwt_string
 
         except Exception as e:
-            # return an error in string format if an exception occurs
             return str(e)
 
     @staticmethod
@@ -82,7 +81,7 @@ class Bucketlist(db.Model):
     __tablename__ = 'bucketlists'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(255), unique=True)
     created_by = db.Column(db.Integer, db.ForeignKey(User.id))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
@@ -105,7 +104,7 @@ class Bucketlist(db.Model):
         """
         Gets the bucketlists that belong to a aparticular user.
         """
-        return Bucketlist.query.filter_by(User.id)
+        return Bucketlist.query.all()
 
     def delete(self):
         """
@@ -124,7 +123,7 @@ class BucketlistItem(db.Model):
     __tablename__ = 'items'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(255), unique=True)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
@@ -133,23 +132,23 @@ class BucketlistItem(db.Model):
     bucketlist_id = db.Column(db.Integer, db.ForeignKey(
         Bucketlist.id), nullable=False)
 
-    def __init__(self, name):
-        'Initialize with name.'
+    def __init__(self, name, bucketlist_id):
+        """Initialize with name."""
         self.name = name
         self.bucketlist_id = bucketlist_id
 
     def save(self):
-        'Save a new/edited bucketlist item'
+        """Save a new/edited bucketlist item"""
         db.session.add(self)
         db.session.commit()
 
     @staticmethod
-    def get_all(bucketlist_id):
-        'Retrieve all the bucketlists items in a given bucketlist'
-        return BucketListItem.query.filter_by(bucketlist_id=bucketlist_id)
+    def get_all():
+        """Retrieve all the bucketlists items in a given bucketlist"""
+        return BucketListItem.query.filter_by(BucketListItem.id)
 
     def delete(self):
-        'Delete a bucketlist item'
+        """Delete a bucketlist item"""
         db.session.delete(self)
         db.session.commit()
 
