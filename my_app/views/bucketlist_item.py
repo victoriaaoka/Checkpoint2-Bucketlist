@@ -5,7 +5,6 @@ import decorator
 from my_app.models import Bucketlist, BucketlistItem
 from . import bucketlist_item_blueprint
 
-<<<<<<< HEAD
 
 class BucketlistItemView(MethodView):
 
@@ -114,7 +113,7 @@ bucketlist_item_blueprint.add_url_rule("/bucketlists/<int:id>/items/", view_func
 bucketlist_item_blueprint.add_url_rule(
     "/bucketlists/<int:id>/items/<int:item_id>", view_func=manipulation_view,
     methods=["PUT", "GET", "DELETE"])
-=======
+
 def bucketlistitems():
     if request.method == "POST":
         name = str(request.data.get('name', ''))
@@ -180,4 +179,3 @@ def bucketlistitems():
 #         })
 #         response.status_code = 200
 #         return response
->>>>>>> d3e88accb16acddc0c18794e342bc23c89284613

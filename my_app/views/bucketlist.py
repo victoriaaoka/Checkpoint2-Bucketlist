@@ -1,15 +1,14 @@
 from flask.views import MethodView
 from flask import request, jsonify, abort, make_response
-<<<<<<< HEAD
-=======
+
+
 
 #from decorator import login_required
->>>>>>> d3e88accb16acddc0c18794e342bc23c89284613
+
 from my_app.models import Bucketlist, BucketlistItem
 from . import bucketlist_blueprint
 
 
-<<<<<<< HEAD
 class BucketlistView(MethodView):
 
     def post(self):
@@ -59,7 +58,7 @@ class BucketlistManipulationView(MethodView):
             return make_response(jsonify(response)), 404
         else:
             name = str(request.data.get('name'))
-=======
+
 class BucketListView(MethodView):
     #decorators = [login_required]
 
@@ -108,7 +107,6 @@ class BucketListView(MethodView):
 
         elif request.method == 'PUT':
             name = str(request.data.get('name', ''))
->>>>>>> d3e88accb16acddc0c18794e342bc23c89284613
             bucketlist.name = name
             bucketlist.save()
             response = jsonify({
@@ -117,7 +115,7 @@ class BucketListView(MethodView):
                 'date_created': bucketlist.date_created,
                 'date_modified': bucketlist.date_modified
             })
-<<<<<<< HEAD
+
             response = {"message": "Bucketlist updated successfully."}
             return make_response(jsonify(response)), 200
 
@@ -142,7 +140,6 @@ bucketlist_blueprint.add_url_rule("/bucketlists/", view_func=bucketlist_view,
 bucketlist_blueprint.add_url_rule(
     "/bucketlists/<int:id>", view_func=manipulation_view,
     methods=['DELETE', 'PUT'])
-=======
             response.status_code = 200
             return response
         else:
@@ -165,4 +162,3 @@ bucketlist_blueprint.add_url_rule(
 # bucketlist_blueprint.add_url_rule(
 #     "/bucketlists/<int:id>/", view_func=manipulation_view,
 #     methods=["PUT", "GET", "DELETE"])
->>>>>>> d3e88accb16acddc0c18794e342bc23c89284613
