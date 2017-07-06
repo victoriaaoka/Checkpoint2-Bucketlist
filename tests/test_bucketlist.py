@@ -25,9 +25,9 @@ class BucketlistTestCase(unittest.TestCase):
             'password': 'password'
 
         }
-        self.client().post('v1/auth/register', data=json.dumps(
+        self.client().post('/auth/register', data=json.dumps(
             self.user_data))
-        self.client().post('v1/auth/login', data=json.dumps(
+        self.client().post('/auth/login', data=json.dumps(
             self.user_login))
 
         with self.app.app_context():
@@ -45,26 +45,26 @@ class BucketlistTestCase(unittest.TestCase):
         Test that the API can create a bucketlist successfully
         using a POST request
         """
-        response = self.client().post('v1/bucketlists/', data=json.dumps(
+        response = self.client().post('/bucketlists/', data=json.dumps(
             self.bucketlist))
         self.assertEqual(response.status_code, 201)
         self.assertIn('Vacation', str(response.data))
 
     def test_create_bucketlist_with_name_not_string(self):
         """Test create a bucketlist with a name that is not a string."""
-        response = self.client().post('v1/bucketlists/', data=json.dumps(
-            {'name': '5667899'}))
+        response = self.client().post('/bucketlists/', data=json.dumps(
+            {"name": "5667899"}))
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            response['message'], "Bucketlist name can only be of type string.")
+            response["message"], "Bucketlist name can only be of type string.")
 
     def test_create_bucketlist_without_name(self):
         """Test create a bucketlist without a name."""
-        response = self.client().post('v1/bucketlists/', data=json.dumps({
+        response = self.client().post('/bucketlists/', data=json.dumps({
             'name': ' '}))
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            response['message'], "Bucketlist name must be provided.")
+            response['message'], "Bucketlist name should be provided.")
 
     def test_create_bucketlist_that_already_exists(self):
         """Test create a bucketlist that already exists."""
