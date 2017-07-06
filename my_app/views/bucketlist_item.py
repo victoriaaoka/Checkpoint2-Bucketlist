@@ -1,7 +1,5 @@
 from flask.views import MethodView
 from flask import request, jsonify, abort, make_response
-
-import decorator
 from my_app.models import Bucketlist, BucketlistItem
 from . import bucketlist_item_blueprint
 
@@ -11,21 +9,31 @@ class BucketlistItemView(MethodView):
     def post(self, id):
         bucketlist = Bucketlist.query.filter_by(id=id).first()
         if not bucketlist:
-            abort(404)
+            response = {"message": "You do not have any backetlists."}
+            return make_response(jsonify(response)), 404
         else:
             name = str(request.data.get('name'))
             if name:
-                item = BucketlistItem(name=name, bucketlist_id=id)
-                item.save()
-                response = {
-                    'id': item.id,
-                    'name': item.name,
-                    'date_created': item.date_created,
-                    'date_modified': item.date_modified,
-                    'bucketlist_id': Bucketlist.id
-                }
-                response = {"message": "The bucketlist item has been created!"}
-                return make_response(jsonify(response)), 201
+                existing_item = BucketlistItem.query.filter_by(name=name,).first()
+                if existing_item:
+                    response = {"message": "The bucketlist item already exists!"}
+                    return make_response(jsonify(response)), 409
+                elif not name.isalpha():
+                    response = {"message": "The bucketlist item name should be \
+of type string only"}
+                    return make_response(jsonify(response)), 409
+                else:
+                    item = BucketlistItem(name=name, bucketlist_id=id)
+                    item.save()
+                    response = {
+                        'id': item.id,
+                        'name': item.name,
+                        'date_created': item.date_created,
+                        'date_modified': item.date_modified,
+                        'bucketlist_id': Bucketlist.id
+                    }
+                    response.update({"message": "The bucketlist item has been created!"})
+                    return make_response(jsonify(response)), 201
             else:
                 response = {"message": "Please enter bucketlist item name."}
                 return make_response(jsonify(response)), 400
