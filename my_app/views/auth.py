@@ -2,6 +2,8 @@ from . import auth_blueprint
 from flask.views import MethodView
 from flask import make_response, request, jsonify
 from my_app.models import User
+from my_app.schema import UserRegistrationSchema, UserLoginSchema
+
 
 class RegistrationView(MethodView):
     """This class registers a new user."""
@@ -14,8 +16,12 @@ class RegistrationView(MethodView):
         user = User.query.filter_by(username=request.data['username']).first()
 
         if not user:
+            post_data = request.data
+            registration_schema = UserRegistrationSchema()
+            errors = registration_schema.validate(post_data)
+            if errors:
+                return errors
             try:
-                post_data = request.data
                 username = post_data['username']
                 email = post_data['email']
                 password = post_data['password']
@@ -52,12 +58,16 @@ class LoginView(MethodView):
     def post(self):
         """Handle POST request for login view."""
         try:
-            user = User.query.filter_by(username=request.data['username']).first()
-
+            post_data = request.data
+            login_schema = UserLoginSchema()
+            errors = login_schema.validate(post_data)
+            if errors:
+                return errors
+            user = User.query.filter_by(username=post_data['username']).first()
             # Authenticate the user using their password
-            if user and user.password_is_valid(request.data['password']):
+            if user and user.password_is_valid(post_data['password']):
                 # Generate the access token.
-                access_token = user.generate_token(user.id)
+                access_token = str(user.generate_token(user.id, app=auth_blueprint))
                 if access_token:
                     response = {
                         'message': 'You logged in successfully.',
