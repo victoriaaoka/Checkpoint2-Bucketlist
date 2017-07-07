@@ -2,6 +2,7 @@ from flask.views import MethodView
 from flask import request, jsonify, abort, make_response
 from my_app.models import Bucketlist, BucketlistItem
 from . import bucketlist_item_blueprint
+from my_app.schema import BucketlistItemSchema
 
 
 class BucketlistItemView(MethodView):
@@ -13,14 +14,15 @@ class BucketlistItemView(MethodView):
             return make_response(jsonify(response)), 404
         else:
             name = str(request.data.get('name'))
+            data = request.data
             if name:
+                item_schema = BucketlistItemSchema()
+                errors = item_schema.validate(data)
+                if errors:
+                    return errors
                 existing_item = BucketlistItem.query.filter_by(name=name,).first()
                 if existing_item:
                     response = {"message": "The bucketlist item already exists!"}
-                    return make_response(jsonify(response)), 409
-                elif not name.isalpha():
-                    response = {"message": "The bucketlist item name should be \
-of type string only"}
                     return make_response(jsonify(response)), 409
                 else:
                     item = BucketlistItem(name=name, bucketlist_id=id)
@@ -28,14 +30,15 @@ of type string only"}
                     response = {
                         'id': item.id,
                         'name': item.name,
-                        'date_created': item.date_created,
-                        'date_modified': item.date_modified,
-                        'bucketlist_id': Bucketlist.id
+                        'date_created': str(item.date_created),
+                        'date_modified': str(item.date_modified),
+                        'bucketlist_id': bucketlist.id
                     }
                     response.update({"message": "The bucketlist item has been created!"})
                     return make_response(jsonify(response)), 201
             else:
                 response = {"message": "Please enter bucketlist item name."}
+
                 return make_response(jsonify(response)), 400
 
     def get(self, id):
