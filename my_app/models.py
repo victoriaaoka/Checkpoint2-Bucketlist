@@ -3,8 +3,8 @@ import jwt
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
 
+db = SQLAlchemy()
 
 class User(db.Model):
     """This class represents the users table."""
@@ -13,7 +13,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(255))
+    password = db.Column(db.String(255), nullable=False)
     backetlists = db.relationship(
         'Bucketlist', order_by='Bucketlist.id', cascade='all, delete-orphan')
 
@@ -35,11 +35,10 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def generate_token(self, user_id):
+    def generate_token(self, user_id, app):
         """
         Generates the token.
         """
-
         try:
             """ set up a payload with an expiration time"""
             payload = {
@@ -50,7 +49,7 @@ class User(db.Model):
             # create the byte string token using the payload and the SECRET key
             jwt_string = jwt.encode(
                 payload,
-                current_app.config.get('SECRET'),
+                "token_secret",
                 algorithm='HS256'
             )
             return jwt_string
@@ -63,7 +62,7 @@ class User(db.Model):
         """Decodes the access token from the Authorization header."""
         try:
             # Decode the token using our SECRET variable
-            payload = jwt.decode(token, current_app.config.get('SECRET'))
+            payload = jwt.decode(token)
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return "Expired token. Please login to get a new token"
@@ -87,9 +86,9 @@ class Bucketlist(db.Model):
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
-    items = db.relationship(
+    items = (db.relationship(
         'BucketlistItem', order_by='BucketlistItem.bucketlist_id',
-        cascade='all, delete-orphan')
+        cascade='all, delete-orphan'))
 
     def __init__(self, name):
         """initialize with name."""
