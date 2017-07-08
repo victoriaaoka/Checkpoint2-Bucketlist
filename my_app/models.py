@@ -59,11 +59,11 @@ class User(db.Model):
             return str(e)
 
     @staticmethod
-    def decode_token(token):
+    def decode_token(access_token):
         """Decodes the access token from the Authorization header."""
         try:
             # Decode the token using our SECRET variable
-            payload = jwt.decode(token)
+            payload = jwt.decode(access_token)
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return "Expired token. Please login to get a new token"
