@@ -4,9 +4,8 @@ python:
 install:
     - pip install -r requirements.txt
     - pip install coveralls
-    - pip install pytest-cov
 
-script: pytest --cov-report=term --cov=my_app
+script: python manage.py runtests --cov-report=term --cov=my_app
 
 after_success:
     - coveralls
