@@ -44,22 +44,48 @@ class BucketlistItemView(MethodView):
                 return make_response(jsonify(response)), 400
 
     def get(self, id):
+            limit = request.args.get("limit", 20)
+            page = request.args.get("page", 1)
+            q = request.args.get("q", None)
+            limit = 100 if int(limit) > 100 else int(limit)
             bucketlist_items = BucketlistItem.query.filter_by(
                 bucketlist_id=id).all()
             if bucketlist_items:
-                results = []
-                count = 1
-                for item in bucketlist_items:
-                    obj = {
-                        'id': count,
-                        'name': item.name,
-                        'date_created': item.date_created,
-                        'date_modified': item.date_modified
-                    }
-                    results.append(obj)
-                    count += 1
-                response = jsonify(results)
-                return make_response(response), 200
+
+                if q:
+                    items = BucketlistItem.query.filter(
+                        BucketlistItem.name.ilike("%" + q + "%")).all()
+                    if items:
+                        results = []
+                        count = 1
+                        for item in bucketlist_items:
+                            obj = {
+                                'id': count,
+                                'name': item.name,
+                                'date_created': item.date_created,
+                                'date_modified': item.date_modified
+                            }
+                            results.append(obj)
+                            count += 1
+                        response = jsonify(results)
+                        return make_response(response), 200
+                    else:
+                        response = {"message": "No items found."}
+                        return make_response(jsonify(response)), 404
+                else:
+                    results = []
+                    count = 1
+                    for item in bucketlist_items:
+                        obj = {
+                            'id': count,
+                            'name': item.name,
+                            'date_created': item.date_created,
+                            'date_modified': item.date_modified
+                        }
+                        results.append(obj)
+                        count += 1
+                    response = jsonify(results)
+                    return make_response(response), 200
             else:
                 response = {"message": "You do not have any bucketlists items."}
                 return make_response(jsonify(response)), 404
