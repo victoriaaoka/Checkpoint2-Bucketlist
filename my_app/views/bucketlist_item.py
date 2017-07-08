@@ -20,7 +20,8 @@ class BucketlistItemView(MethodView):
                 errors = item_schema.validate(data)
                 if errors:
                     return errors
-                existing_item = BucketlistItem.query.filter_by(name=name,).first()
+                existing_item = BucketlistItem.query.filter_by(
+                    name=name,).first()
                 if existing_item:
                     response = {"message": "The bucketlist item already exists!"}
                     return make_response(jsonify(response)), 409
@@ -34,7 +35,8 @@ class BucketlistItemView(MethodView):
                         'date_modified': str(item.date_modified),
                         'bucketlist_id': bucketlist.id
                     }
-                    response.update({"message": "The bucketlist item has been created!"})
+                    response.update(
+                        {"message": "The bucketlist item has been created!"})
                     return make_response(jsonify(response)), 201
             else:
                 response = {"message": "Please enter bucketlist item name."}
@@ -42,7 +44,8 @@ class BucketlistItemView(MethodView):
                 return make_response(jsonify(response)), 400
 
     def get(self, id):
-            bucketlist_items = BucketlistItem.query.filter_by(bucketlist_id=id).all()
+            bucketlist_items = BucketlistItem.query.filter_by(
+                bucketlist_id=id).all()
             if bucketlist_items:
                 results = []
                 count = 1
@@ -88,10 +91,9 @@ class BucketlistItemManipulationView(MethodView):
             items = BucketlistItem.query.filter_by(bucketlist_id=id).all()
             item = BucketlistItem.query.filter_by(id=item_id).first()
             the_item = items[int(item_id) - 1]
-            #the_item = [item for item in items if item.id == item_id][0]
             if the_item:
                 results = {
-                    'id':  item_id ,
+                    'id':  item_id,
                     'name': the_item.name,
                     'date_created': the_item.date_created,
                     'date_modified': the_item.date_modified
@@ -104,7 +106,8 @@ class BucketlistItemManipulationView(MethodView):
                 return make_response(jsonify(response)), 404
 
         def delete(self, id, item_id):
-            item = BucketlistItem.query.filter_by(bucketlist_id=id, id=item_id).first()
+            item = BucketlistItem.query.filter_by(
+                bucketlist_id=id, id=item_id).first()
             if item:
                 item.delete()
                 response = {"message": "Bucketlist item deleted successfully."}
@@ -114,13 +117,14 @@ class BucketlistItemManipulationView(MethodView):
                 response = {"message": "The bucketlist item does not exist."}
                 return make_response(jsonify(response)), 404
 
- # API resource
+# API resource
 bucketlist_item_view = BucketlistItemView.as_view("bucketlist_item_view")
 manipulation_view = BucketlistItemManipulationView.as_view("manipulation_view")
 
 # Rule for bucketlist with blueprint
-bucketlist_item_blueprint.add_url_rule("/bucketlists/<int:id>/items/", view_func=bucketlist_item_view,
-                                  methods=["POST", "GET"])
+bucketlist_item_blueprint.add_url_rule(
+    "/bucketlists/<int:id>/items/", view_func=bucketlist_item_view,
+    methods=["POST", "GET"])
 bucketlist_item_blueprint.add_url_rule(
     "/bucketlists/<int:id>/items/<int:item_id>", view_func=manipulation_view,
     methods=["PUT", "GET", "DELETE"])
