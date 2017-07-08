@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
     """This class represents the users table."""
     __tablename__ = 'users'
@@ -17,7 +18,7 @@ class User(db.Model):
     backetlists = db.relationship(
         'Bucketlist', order_by='Bucketlist.id', cascade='all, delete-orphan')
 
-    def __init__(self, username,email, password):
+    def __init__(self, username, email, password):
         """
         Initialize with username and password.
         """
