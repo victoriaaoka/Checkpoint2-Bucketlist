@@ -14,8 +14,19 @@ class RegistrationView(MethodView):
 
         # Query to check if the user already exists
         user = User.query.filter_by(username=request.data['username']).first()
+        existing_email = User.query.filter_by(email=request.data['email']).first()
+        if user:
+            response = {
+                'message': 'The username has been taken.'
+            }
+            return make_response(jsonify(response)), 409
+        elif existing_email:
+            response = {
+                'message': 'The email exists please login.'
+            }
+            return make_response(jsonify(response)), 409
 
-        if not user:
+        else:
             post_data = request.data
             registration_schema = UserRegistrationSchema()
             errors = registration_schema.validate(post_data)
@@ -44,12 +55,6 @@ class RegistrationView(MethodView):
                     'message': str(e)
                 }
                 return make_response(jsonify(response)), 401
-        else:
-            response = {
-                'message': 'The user already exists! Please login.'
-            }
-
-            return make_response(jsonify(response)), 202
 
 
 class LoginView(MethodView):
@@ -74,6 +79,11 @@ class LoginView(MethodView):
                         'access_token': access_token
                             }
                     return make_response(jsonify(response)), 200
+                else:
+                    response = {
+                        'message': 'Invalid token!'
+                            }
+                    return make_response(jsonify(response)), 401
             else:
                 response = {
                     'message': 'Invalid username or password, Please try again'
