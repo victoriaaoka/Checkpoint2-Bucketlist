@@ -7,9 +7,9 @@ from my_app.schema import BucketlistSchema
 
 
 class BucketlistView(MethodView):
-    decorators = [login_required]
+    #decorators = [login_required]
 
-    def post(self, user_id):
+    def post(self):
         name = str(request.data.get('name', ''))
         data = request.data
         if name:
@@ -18,7 +18,7 @@ class BucketlistView(MethodView):
             if errors:
                 return errors
             existing_bucketlist = Bucketlist.query.filter_by(
-                name=name, created_by=user_id).first()
+                name=name).first()
             if existing_bucketlist:
                 response = {"message": "The bucketlist already exists!"}
                 return make_response(jsonify(response)), 409
@@ -41,14 +41,18 @@ class BucketlistView(MethodView):
             response = {"message": "Bucketlist name should be provided."}
             return make_response(jsonify(response)), 400
 
-    def get(self, user_id):
-            bucketlists = Bucketlist.query.filter_by(
-                created_by=user_id).first()
-            if not bucketlists:
-                response = {"message": "You do not have any bucketlists."}
-                return make_response(jsonify(response)), 404
-            else:
+    def get(self):
+        limit = request.args.get("limit", 20)
+        page = request.args.get("page", 1)
+        q = request.args.get("q", None)
+        limit = 100 if int(limit) > 100 else int(limit)
+
+        if q:
+            bucketlists = Bucketlist.query.filter(
+                Bucketlist.name.ilike("%" + q + "%")).all()
+            if bucketlists:
                 results = []
+                count = 1
                 itemslist = []
                 for bucketlist in bucketlists:
                     items = BucketlistItem.query.filter_by(
@@ -63,7 +67,7 @@ class BucketlistView(MethodView):
                         itemslist.append(itemdict)
 
                     obj = {
-                        'id': bucketlist.id,
+                        'id': count,
                         'name': bucketlist.name,
                         'date_created': bucketlist.date_created,
                         'date_modified': bucketlist.date_modified,
@@ -71,17 +75,52 @@ class BucketlistView(MethodView):
                     }
                     itemslist = []
                     results.append(obj)
+                    count += 1
+                return make_response(jsonify(results)), 200
+            else:
+                response = {"message": "No bucketlists found."}
+                return make_response(jsonify(response)), 404
+        else:
+            bucketlists = Bucketlist.get_all()
+            if not bucketlists:
+                response = {"message": "You do not have any bucketlists."}
+                return make_response(jsonify(response)), 404
+            else:
+                results = []
+                count = 1
+                itemslist = []
+                for bucketlist in bucketlists:
+                    items = BucketlistItem.query.filter_by(
+                        bucketlist_id=bucketlist.id).all()
+                    for item in items:
+                        itemdict = {
+                            'id': item.id,
+                            'name': item.name,
+                            'date_created': item.date_created,
+                            'date_modified': item.date_modified,
+                            'done': item.done}
+                        itemslist.append(itemdict)
+
+                    obj = {
+                        'id': count,
+                        'name': bucketlist.name,
+                        'date_created': bucketlist.date_created,
+                        'date_modified': bucketlist.date_modified,
+                        'items': itemslist
+                    }
+                    itemslist = []
+                    results.append(obj)
+                    count += 1
                 return make_response(jsonify(results)), 200
 
 
 class BucketlistManipulationView(MethodView):
-    decorators = [login_required]
+    #decorators = [login_required]
 
-    def get(self, id, user_id):
-        bucketlists = Bucketlist.query.filter_by(
-            created_by=user_id).all()
+    def get(self, id):
+        bucketlists = Bucketlist.get_all()
         bucketlist = Bucketlist.query.filter_by(
-            id=id, created_by=user_id).first()
+            id=id).first()
         if not bucketlists:
             response = {"message": "You do not have any bucketlists."}
             return make_response(jsonify(response)), 404
@@ -111,9 +150,9 @@ class BucketlistManipulationView(MethodView):
                 response = {"message": "The bucketlist does not exist."}
                 return make_response(jsonify(response)), 404
 
-    def put(self, id, user_id):
+    def put(self, id):
         bucketlist = Bucketlist.query.filter_by(
-            id=id, created_by=user_id).first()
+            id=id).first()
         if not bucketlist:
             abort(404)
             response = {"message": "The bucketlist does not exist."}
@@ -137,9 +176,8 @@ class BucketlistManipulationView(MethodView):
                     {"message": "Bucketlist updated successfully."})
                 return make_response(jsonify(response)), 200
 
-    def delete(self, id, user_id):
-        bucketlists = Bucketlist.query.filter_by(
-            created_by=user_id).all()
+    def delete(self, id):
+        bucketlists = Bucketlis.get_all()
         try:
             bucketlist = [bucketlist for bucketlist in bucketlists if bucketlist.id == id][0]
             bucketlist.delete()
