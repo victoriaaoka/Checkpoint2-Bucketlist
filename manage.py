@@ -16,10 +16,20 @@ manager.add_command('db', MigrateCommand)
 def runtests():
     """Runs the unit tests automatically."""
     tests = unittest.TestLoader().discover('./tests', pattern='test*.py')
-    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    result = unittest.TextTestRunner(verbosity=1).run(tests)
     if result.wasSuccessful():
         return 0
     return 1
+
+@manager.command
+def initdb():
+        db.create_all()
+        print("All tables created.")
+
+@manager.command
+def dropdb():
+        db.drop_all()
+        print("All tables deleted.")
 
 if __name__ == '__main__':
     manager.run()
