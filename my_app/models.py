@@ -15,7 +15,7 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    backetlists = db.relationship(
+    bucketlists = db.relationship(
         'Bucketlist', order_by='Bucketlist.id', cascade='all, delete-orphan')
 
     def __init__(self, username, email, password):
@@ -63,12 +63,12 @@ class User(db.Model):
         """Decodes the access token from the Authorization header."""
         try:
             # Decode the token using our SECRET variable
-            payload = jwt.decode(access_token)
+            payload = jwt.decode(access_token, "token_secret")
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return "Expired token. Please login to get a new token"
-        except jwt.InvalidTokenError:
-            return "Invalid token. Please register or login"
+        except jwt.InvalidTokenError as e:
+            return  str(e)
 
     def delete(self):
         db.session.delete(self)
@@ -82,7 +82,8 @@ class Bucketlist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255))
-    created_by = db.Column(db.Integer, db.ForeignKey(User.id))
+    created_by = db.Column(db.Integer, db.ForeignKey(
+        User.id), nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
@@ -91,9 +92,10 @@ class Bucketlist(db.Model):
         'BucketlistItem', order_by='BucketlistItem.bucketlist_id',
         cascade='all, delete-orphan'))
 
-    def __init__(self, name):
+    def __init__(self, name, created_by):
         """initialize with name."""
         self.name = name
+        self.created_by = created_by
 
     def save(self):
         db.session.add(self)
