@@ -14,7 +14,8 @@ class RegistrationView(MethodView):
 
         # Query to check if the user already exists
         user = User.query.filter_by(username=request.data['username']).first()
-        existing_email = User.query.filter_by(email=request.data['email']).first()
+        existing_email = User.query.filter_by(
+            email=request.data['email']).first()
         if user:
             response = {
                 'message': 'The username has been taken.'
@@ -40,9 +41,7 @@ class RegistrationView(MethodView):
                 user.save()
                 user_details = {"username": post_data['username'],
                                             "email":  post_data['email'],
-                                            "password": post_data['password'],
-                                            "id": user.id
-                                             }
+                                            "id": user.id}
                 response = {
                     'message': 'You registered successfully!'
                 }
@@ -72,7 +71,8 @@ class LoginView(MethodView):
             # Authenticate the user using their password
             if user and user.password_is_valid(post_data['password']):
                 # Generate the access token.
-                access_token = str(user.generate_token(user.id, app=auth_blueprint))
+                access_token = user.generate_token(
+                    user.id, app=auth_blueprint).decode()
                 if access_token:
                     response = {
                         'message': 'You logged in successfully.',
@@ -86,7 +86,7 @@ class LoginView(MethodView):
                     return make_response(jsonify(response)), 401
             else:
                 response = {
-                    'message': 'Invalid username or password, Please try again'
+                    'message': 'Invalid username or password, Please try again.'
                 }
                 return make_response(jsonify(response)), 401
 
