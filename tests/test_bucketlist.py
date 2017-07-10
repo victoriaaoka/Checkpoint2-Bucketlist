@@ -151,5 +151,34 @@ class BucketlistTestCase(unittest.TestCase):
         response = self.client().delete('/api/v1/bucketlists/10', headers=self.get_token())
         self.assertEqual(response.status_code, 404)
 
+    def test_search_bucketlists_by_name(self):
+        self.client().post('/api/v1/bucketlists/', data={
+            'name': 'Go shopping'}, headers=self.get_token())
+        response = self.client().get('/api/v1/bucketlists/?q=shop',
+            headers=self.get_token())
+        self.assertEqual(response.status_code, 200)
+
+    def test_bucketlist_creation_without_token(self):
+        """
+        Test that a user cannot create a bucketlist without a token
+        """
+        response = self.client().post('/api/v1/bucketlists/', data=
+            self.bucketlist)
+        self.assertEqual(response.status_code, 401)
+
+    def test_bucketlist_pagination(self):
+        """
+        Test the use of pagination in getting bucketlists.
+        """
+        response = self.client().post('/api/v1/bucketlists/', data=
+            self.bucketlist, headers=self.get_token())
+        response = self.client().post('/api/v1/bucketlists/', data={
+            'name': 'Go shopping'}, headers=self.get_token())
+        response = self.client().get('/api/v1/bucketlists/?limit=1',
+            headers=self.get_token())
+        output = json.loads(response.data.decode())
+        self.assertEqual(1, len(output))
+
+
 if __name__ == '__main__':
     unittest.main()
