@@ -20,7 +20,7 @@ class RegistrationView(MethodView):
             response = {
                 'message': 'The username has been taken.'
             }
-            return make_response(jsonify(response)), 409
+            return make_response(jsonify(response)), 400
         elif existing_email:
             response = {
                 'message': 'The email exists please login.'
@@ -66,7 +66,7 @@ class LoginView(MethodView):
             login_schema = UserLoginSchema()
             errors = login_schema.validate(post_data)
             if errors:
-                return errors
+                return errors, 400
             user = User.query.filter_by(username=post_data['username']).first()
             # Authenticate the user using their password
             if user and user.password_is_valid(post_data['password']):
