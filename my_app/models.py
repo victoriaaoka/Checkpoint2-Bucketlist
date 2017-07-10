@@ -1,16 +1,16 @@
 import os
+import sys
 import jwt
 from flask_bcrypt import Bcrypt
+from my_app.app import db
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
 
 
 class User(db.Model):
     """This class represents the users table."""
     __tablename__ = 'users'
-
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
