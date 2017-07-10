@@ -16,7 +16,7 @@ class BucketlistView(MethodView):
             bucketlist_schema = BucketlistSchema()
             errors = bucketlist_schema.validate(data)
             if errors:
-                return errors
+                return errors, 400
             existing_bucketlist = Bucketlist.query.filter_by(
                 name=name, created_by=user_id).first()
             if existing_bucketlist:
