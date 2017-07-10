@@ -10,7 +10,7 @@ def login_required(func):
     def decorator(*args, **kwargs):
         access_token = request.headers.get("access_token")
         if not access_token:
-            response = {"message": "No token pro"}
+            response = {"message": "No token provided."}
             return make_response(jsonify(response)), 401
 
         if access_token:
