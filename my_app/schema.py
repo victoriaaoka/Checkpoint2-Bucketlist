@@ -19,7 +19,7 @@ class UserRegistrationSchema(Schema):
 class UserLoginSchema(Schema):
 
     username = fields.String(validate=[validate.Length(min=3),
-                              validate.Regexp(r"[a-zA-Z0-9_\- ]*$",
+                        validate.Regexp(r"[a-zA-Z0-9_\- ]*$",
                                               error="Invalid characters entered.")],
                               required=True,
                               error_messages={"required": "Please enter a username"})
