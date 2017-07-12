@@ -9,10 +9,29 @@ class RegistrationView(MethodView):
     """This class registers a new user."""
 
     def post(self):
-        """Handle POST request to register a user."""
-        print(request.data)
+        """
+       Registers a new user.
+       ---
+       tags:
+            - The Users API
+       parameters:
+         - in: formData
+           name: email
+           type: string
+           required: true
+         - in: formData
+           name: username
+           type: string
+           required: true
+         - in: formData
+           name: password
+           type: string
+           required: true
+       responses:
+         201:
+           description: New user registered.
 
-        # Query to check if the user already exists
+        """
         user = User.query.filter_by(username=request.data['username']).first()
         existing_email = User.query.filter_by(
             email=request.data['email']).first()
@@ -20,7 +39,7 @@ class RegistrationView(MethodView):
             response = {
                 'message': 'The username has been taken.'
             }
-            return make_response(jsonify(response)), 400
+            return make_response(jsonify(response)), 409
         elif existing_email:
             response = {
                 'message': 'The email exists please login.'
@@ -60,7 +79,25 @@ class LoginView(MethodView):
     """This view handles user login and access token generation."""
 
     def post(self):
-        """Handle POST request for login view."""
+        """
+       Logs in a user.
+       ---
+       tags:
+            - The Users API
+       parameters:
+         - in: formData
+           name: username
+           type: string
+           required: true
+         - in: formData
+           name: password
+           type: string
+           required: true
+       responses:
+         201:
+           description: User logged in.
+
+        """
         try:
             post_data = request.data
             login_schema = UserLoginSchema()
