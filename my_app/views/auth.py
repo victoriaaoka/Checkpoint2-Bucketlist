@@ -32,6 +32,12 @@ class RegistrationView(MethodView):
            description: New user registered.
 
         """
+        post_data = request.data
+        username = post_data.get('username')
+        email = post_data.get('email')
+        password = post_data.get('password')
+        if not username or not email or not password:
+          return {'message': 'Please enter all the required data!'}, 400
         user = User.query.filter_by(username=request.data['username']).first()
         existing_email = User.query.filter_by(
             email=request.data['email']).first()
@@ -47,15 +53,15 @@ class RegistrationView(MethodView):
             return make_response(jsonify(response)), 409
 
         else:
-            post_data = request.data
+
             registration_schema = UserRegistrationSchema()
             errors = registration_schema.validate(post_data)
             if errors:
                 return errors
             try:
-                username = post_data['username']
-                email = post_data['email']
-                password = post_data['password']
+
+                if len(username.strip()) < 1:
+                  return { 'message': 'Invalid username.'}, 400
                 user = User(username=username, email=email, password=password)
                 user.save()
                 user_details = {"username": post_data['username'],
