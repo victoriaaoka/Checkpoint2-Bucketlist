@@ -10,6 +10,16 @@ class BucketlistItemView(MethodView):
     decorators = [login_required]
 
     def post(self, id, user_id):
+        """
+       Creates a new bucketlist item.
+       ---
+       tags:
+            - The Bucketlist Items API
+       responses:
+         201:
+           description: New bucketlist item created.
+
+        """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         bucketlist = bucketlists[id - 1]
         if not bucketlist:
@@ -52,6 +62,16 @@ class BucketlistItemManipulationView(MethodView):
     decorators = [login_required]
 
     def put(self, id, item_id, user_id):
+        """
+       Updates a bucketlist item.
+       ---
+       tags:
+            - The Bucketlist Items API
+       responses:
+         201:
+           description: Bucketlist item updated.
+
+        """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         bucketlist = bucketlists[id - 1]
         items = BucketlistItem.query.filter_by(
@@ -79,6 +99,16 @@ class BucketlistItemManipulationView(MethodView):
             return make_response(jsonify(response)), 404
 
     def delete(self, id, item_id, user_id):
+        """
+       Deletes a bucketlist.
+       ---
+       tags:
+            - The Bucketlist Items API
+       responses:
+         201:
+           description: Bucketlist item deleted.
+
+        """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         bucketlist = bucketlists[id - 1]
         items = BucketlistItem.query.filter_by(
