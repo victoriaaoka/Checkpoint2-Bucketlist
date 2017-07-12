@@ -1,5 +1,6 @@
 import os
 from flask_api import FlaskAPI
+from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config
 
@@ -9,6 +10,7 @@ db = SQLAlchemy()
 
 def create_app(config_name):
     app = FlaskAPI(__name__, instance_relative_config=True)
+    Swagger(app)
     app.config.from_object(os.getenv('DATABASE_URL'))
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
