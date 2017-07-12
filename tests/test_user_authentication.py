@@ -80,7 +80,7 @@ class AuthTestCase(unittest.TestCase):
         """Test that a user cannot be registered twice."""
         self.client().post('/api/v1/auth/register', data=self.user_data)
         response = self.client().post('/api/v1/auth/register', data=self.user_data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 409)
         output = json.loads(response.data.decode())
         self.assertEqual(
             output['message'], "The username has been taken.")
