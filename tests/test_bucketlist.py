@@ -29,8 +29,6 @@ class BucketlistTestCase(unittest.TestCase):
 
         }
         self.client().post('/api/v1/auth/register', data=self.user_data)
-        # self.client().post('/api/v1/auth/login', data=self.user_login)
-
 
     def tearDown(self):
         """reset all initialized variables."""
@@ -41,7 +39,7 @@ class BucketlistTestCase(unittest.TestCase):
     def get_token(self):
         """Return authentication token."""
         response = self.client().post("/api/v1/auth/login",
-                          data=self.user_login)
+            data=self.user_login)
         output = json.loads(response.data.decode())
         token = output["access_token"]
         return {"access_token": token}
@@ -152,10 +150,13 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_search_bucketlists_by_name(self):
+        """Tests for searching a bucketlist by name."""
         self.client().post('/api/v1/bucketlists/', data={
             'name': 'Go shopping'}, headers=self.get_token())
         response = self.client().get('/api/v1/bucketlists/?q=shop',
             headers=self.get_token())
+        output = json.loads(response.data.decode())
+        self.assertIn("shop", output[0]["name"])
         self.assertEqual(response.status_code, 200)
 
     def test_bucketlist_creation_without_token(self):
@@ -170,8 +171,8 @@ class BucketlistTestCase(unittest.TestCase):
         """
         Test the use of pagination in getting bucketlists.
         """
-        response = self.client().post('/api/v1/bucketlists/', data=
-            self.bucketlist, headers=self.get_token())
+        response = self.client().post('/api/v1/bucketlists/',
+            data=self.bucketlist, headers=self.get_token())
         response = self.client().post('/api/v1/bucketlists/', data={
             'name': 'Go shopping'}, headers=self.get_token())
         response = self.client().get('/api/v1/bucketlists/?limit=1',
