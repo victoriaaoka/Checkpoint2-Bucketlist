@@ -7,9 +7,31 @@ from my_app.schema import BucketlistSchema
 
 
 class BucketlistView(MethodView):
+    """
+    This class creates a new bucketlist using the POST method.
+    It also gets all bucketlists using the GET method."""
     decorators = [login_required]
 
     def post(self, user_id):
+        """
+       Creates a new bucketlist.
+       ---
+       tags:
+            - The Bucketlist API
+       parameters:
+         - in: header
+           name: access_token
+           type: string
+           required: true
+         - in: formData
+           name: name
+           type: string
+           required: true
+       responses:
+         201:
+           description: New bucketlist created.
+
+        """
         name = str(request.data.get('name', ''))
         data = request.data
         if name:
@@ -20,12 +42,13 @@ class BucketlistView(MethodView):
             existing_bucketlist = Bucketlist.query.filter_by(
                 name=name, created_by=user_id).first()
             if existing_bucketlist:
-                response = {"message": "The bucketlist already exists!"}
+                response = {'message': 'The bucketlist already exists!'}
                 return make_response(jsonify(response)), 409
 
             else:
                 bucketlist = Bucketlist(name=name, created_by=user_id)
-                count =  len(Bucketlist.query.filter_by(created_by=user_id).all())
+                count = len(Bucketlist.query.filter_by(
+                    created_by=user_id).all())
                 bucketlist.save()
                 response = {
                     'id':  count + 1,
@@ -37,13 +60,27 @@ class BucketlistView(MethodView):
 
                 }
                 response.update(
-                    {"message": "Bucketlist created successfully!"})
+                    {'message': 'Bucketlist created successfully!'})
                 return make_response(jsonify(response)), 201
         else:
-            response = {"message": "Bucketlist name should be provided."}
+            response = {'message': 'Bucketlist name should be provided.'}
             return make_response(jsonify(response)), 400
 
     def get(self, user_id):
+        """
+       Retrieve all bucketlists.
+       ---
+       tags:
+            - The Bucketlist API
+       parameters:
+         - in: header
+           name: access_token
+           type: string
+           required: true
+       responses:
+         200:
+           description: Bucketlists retrieved.
+        """
         limit = request.args.get("limit", 20)
         page = request.args.get("page", 1)
         q = request.args.get("q", None)
@@ -81,12 +118,12 @@ class BucketlistView(MethodView):
                     count += 1
                 return make_response(jsonify(results)), 200
             else:
-                response = {"message": "No bucketlists found."}
+                response = {'message': 'No bucketlists found.'}
                 return make_response(jsonify(response)), 404
         else:
             bucketlists = Bucketlist.query.filter_by(created_by=user_id)
             if not bucketlists.all():
-                response = {"message": "You do not have any bucketlists."}
+                response = {'message': 'You do not have any bucketlists.'}
                 return make_response(jsonify(response)), 404
             else:
                 bucketlists_pagination = bucketlists.paginate(int(page),
@@ -122,6 +159,26 @@ class BucketlistManipulationView(MethodView):
     decorators = [login_required]
 
     def get(self, id, user_id):
+        """
+       Retrieve a single bucketlist.
+       ---
+       tags:
+            - The Bucketlist API
+       parameters:
+         - in: header
+           name: access_token
+           type: string
+           required: true
+         - in: path
+           name: id
+           type: integer
+           required: true
+       responses:
+         200:
+           description: Bucketlist retrieved.
+         404:
+           description: Bucketlist not found.
+        """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         if not bucketlists:
             response = {"message": "You do not have any bucketlists."}
@@ -156,8 +213,29 @@ class BucketlistManipulationView(MethodView):
                 response = {"message": "The bucketlist does not exist."}
                 return make_response(jsonify(response)), 404
 
-
     def put(self, id, user_id):
+        """
+       Update a bucketlist.
+       ---
+       tags:
+            - The Bucketlist API
+       parameters:
+         - in: header
+           name: access_token
+           type: string
+           required: true
+         - in: path
+           name: id
+           type: string
+           required: true
+         - in: formData
+           name: name
+           type: string
+           required: true
+       responses:
+         200:
+           description: Bucketlist updated.
+        """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         if id < 1:
             response = {"message": "Invalid bucketlist_id"}
@@ -186,6 +264,25 @@ be updated with the same data."}
             return make_response(jsonify(response)), 200
 
     def delete(self, id, user_id):
+        """
+       Deletes a bucketlist.
+       ---
+       tags:
+            - The Bucketlist API
+       parameters:
+         - in: header
+           name: access_token
+           type: string
+           required: true
+         - in: path
+           name: id
+           type: integer
+           required: true
+       responses:
+         201:
+           description: Bucketlist deleted.
+
+        """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id)
         if id < 1:
             response = {"message": "Invalid bucketlist_id"}
