@@ -82,7 +82,7 @@ class RegistrationView(MethodView):
 
 
 class LoginView(MethodView):
-    """This view handles user login and access token generation."""
+    """This class handles user login and access token generation."""
 
     def post(self):
         """
