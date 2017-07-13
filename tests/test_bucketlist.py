@@ -106,13 +106,26 @@ class BucketlistTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 409)
 
     def test_update_bucketlist_that_does_not_exist(self):
-        """Test that the API can edit an existing bucketlist."""
+        """Test that the API cannot  edit a non-existing bucketlist."""
         response = self.client().put(
             '/api/v1/bucketlists/1', data={'name': 'Go for adventure!'},
             headers=self.get_token())
         self.assertEqual(response.status_code, 404)
         output = json.loads(response.data.decode())
         self.assertIn('The bucketlist does not exist.', output['message'])
+
+    def test_update_bucketlist_with_invalid_data(self):
+        """Test that bucketlists cannot be updated with invalid data"""
+        self.client().post(
+            '/api/v1/bucketlists/', data=self.bucketlist,
+            headers=self.get_token())
+        response = self.client().put(
+            '/api/v1/bucketlists/1', data={'name': '@#$%^&&&&!'},
+            headers=self.get_token())
+        self.assertEqual(response.status_code, 400)
+        output = json.loads(response.data.decode())
+        self.assertEqual(
+            output['name'][0], 'Invalid characters')
 
     def test_successful_bucketlist_deletion(self):
         """Test that the API can delete an existing bucketlist."""
