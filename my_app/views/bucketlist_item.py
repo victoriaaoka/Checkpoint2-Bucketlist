@@ -118,24 +118,29 @@ class BucketlistItemManipulationView(MethodView):
             return make_response(jsonify(response)), 404
         try:
             item = items[item_id-1]
+            data = request.data
             if item:
                 name = str(request.data.get('name', ''))
-                if item.name == name:
-                    response = {'message': 'The bucketlist cannot \
+                item_schema = BucketlistItemSchema()
+                errors = item_schema.validate(data)
+                if errors:
+                    return errors, 400
+            if item.name == name:
+                response = {'message': 'The bucketlist cannot \
 be updated with same data.'}
-                    return make_response(jsonify(response)), 409
-                else:
-                    item.name = name
-                    item.save()
-                    response = {
-                            'id': item.id,
-                            'name': item.name,
-                            'date_created': item.date_created,
-                            'date_modified': item.date_modified
-                    }
-                    response .update({'message': 'Bucketlist item \
+                return make_response(jsonify(response)), 409
+            else:
+                item.name = name
+                item.save()
+                response = {
+                        'id': item.id,
+                        'name': item.name,
+                        'date_created': item.date_created,
+                        'date_modified': item.date_modified
+                }
+                response .update({'message': 'Bucketlist item \
 updated successfully.'})
-                    return make_response(jsonify(response)), 200
+                return make_response(jsonify(response)), 200
         except IndexError:
             response = {'message': 'The bucketlist item does not exist.'}
             return make_response(jsonify(response)), 404
