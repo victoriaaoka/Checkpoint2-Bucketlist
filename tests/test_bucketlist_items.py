@@ -60,7 +60,7 @@ class BucketlistItemTestCase(BaseTestCase):
             '/api/v1/bucketlists/1/items/', data=self.bucketlist_item,
             headers=self.get_token())
         response = self.client().put('/api/v1/bucketlists/1/items/1', data={
-            'name': 'Go to Mombasa!'}, headers=self.get_token())
+            'name': 'Go to Mombasa'}, headers=self.get_token())
         self.assertEqual(response.status_code, 200)
 
     def test_edit_a_bucketlist_item_that_does_not_exist(self):
