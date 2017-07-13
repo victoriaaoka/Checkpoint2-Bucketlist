@@ -1,12 +1,11 @@
-## Bucketlist API <br />[![Build Status](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist.svg?branch=master)](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist)
-[![Coverage Status](https://coveralls.io/repos/github/victoriaaoka/Checkpoint2-Bucketlist/badge.svg?branch=master)](https://coveralls.io/github/victoriaaoka/Checkpoint2-Bucketlist?branch=master)
+## Bucketlist API <br />[![Build Status](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist.svg?branch=master)](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist) [![Coverage Status](https://coveralls.io/repos/github/victoriaaoka/Checkpoint2-Bucketlist/badge.svg?branch=master)](https://coveralls.io/github/victoriaaoka/Checkpoint2-Bucketlist?branch=master)
 
-## Introduction
+### Introduction
 According to Merriam-Webster Dictionary,  a Bucket List is a list of things that one has not done before but wants to do before dying.
 
 Bucketlist API is an online flask API that can help users to create, edit and track their bucketlists.
 
-## Installation and Setup
+### Installation and Setup
 Clone the repository.
 ```
 https://github.com/victoriaaoka/Checkpoint2-Bucketlist.git
@@ -25,12 +24,12 @@ python manage.py db init
 python manage.py db migrate
 python manage.py db upgrade
 ```
-## Launch the progam.
+### Launch the progam.
 ```
 python manage.py runserver
 ```
 Interact with the API by sending http requests using Postman.
-## API Endpoints
+### API Endpoints
 | URL Endpoint | HTTP Methods | Description |
 | -------- | ------------- | --------- |
 | `/api/v1/auth/register` | `POST`  | Register a new user|
