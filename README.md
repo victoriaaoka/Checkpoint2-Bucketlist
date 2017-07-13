@@ -62,3 +62,30 @@ User login:
 
 Create a bucketlist:
 ![Screen shot](screenshots/create_bucketlist.png)
+
+Get bucketlist:
+![Screen shot](screenshots/get_bucketlists.png)
+
+Update a bucketlist:
+![Screen shot](screenshots/update_bucketlist.png)
+
+Delete a bucketlist:
+![Screen shot](screenshots/delete_bucketlist.png)
+
+Get a bucketlist:
+![Screen shot](screenshots/get_bucketlists2.png)
+
+Create a bucketlist item:
+![Screen shot](screenshots/create_itempng)
+
+Delete a bucketlist item:
+![Screen shot](screenshots/delete_item.png)
+
+Search bucketlists:
+![Screen shot](screenshots/search_bucketlist.png)
+
+Get bucketlists with pagination (page limit)
+![Screen shot](screenshots/get_bucketlists_with_pagination.png)
+
+Create a bucketlist:
+![Screen shot](screenshots/create_bucketlist.png)
