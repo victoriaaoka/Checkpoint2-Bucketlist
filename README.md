@@ -37,10 +37,10 @@ Interact with the API by sending http requests using Postman.
 | `/api/v1/bucketlists/` | `POST` | Create a new Bucketlist |
 | `/api/v1/bucketlists/` | `GET` | Retrieve all bucketlists for user |
 | `/api/v1/bucketlists/?limit=3` | `GET` | Retrieve three bucketlists per page |
- `/api/v1/bucketlists/?q=name` | `GET` | searches a bucketlist by the name|
+ `/api/v1/bucketlists/?q=name` | `GET` | search a bucketlist by the name|
 | `/api/v1/bucketlists/<id>` | `GET` |  Retrieve a bucketlist by ID|
 | `/api/v1/bucketlists/<id>` | `PUT` | Update a bucketlist |
 | `/api/v1/bucketlists/<id>` | `DELETE` | Delete a bucketlist |
 | `/api/v1/bucketlists/<id>/items/` | `POST` |  Create items in a bucketlist |
-| `/api/v1/bucketlists/<id>/items/<item_id>` | `DELETE`| Delete an item in a bucketlist|
+| `/api/v1/bucketlists/<id>/items/<item_id>` | `DELETE`| Delete an item from a bucketlist|
 | `/api/v1/bucketlists/<id>/items/<item_id>` | `PUT`| update a bucketlist item details|
