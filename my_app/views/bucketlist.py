@@ -77,6 +77,18 @@ class BucketlistView(MethodView):
            name: access_token
            type: string
            required: true
+         - in: query
+           name: q
+           type: string
+           description: search
+         - in: query
+           name: limit
+           type: integer
+           default: 20
+         - in: query
+           name: page
+           type: integer
+           default: 1
        responses:
          200:
            description: Bucketlists retrieved.
@@ -86,15 +98,20 @@ class BucketlistView(MethodView):
         q = request.args.get('q', None)
 
         if q:
-            bucketlists = Bucketlist.query.filter(
-                Bucketlist.name.ilike('%' + q + '%'))
-            if bucketlists.all():
-                bucketlists_pagination = bucketlists.paginate(
-                    int(page), int(limit), False)
+            try:
+                u_bucketlists = Bucketlist.query.filter_by(
+                    created_by=user_id)
+                bucketlists_pagination = u_bucketlists.filter(
+                    Bucketlist.name.ilike('%' + q + '%')).paginate()
+
+            except IndexError:
+                    response = {'message': 'No bucketlists found.'}
+                    return make_response(jsonify(response)), 404
+            if bucketlists_pagination.items:
                 results = []
                 count = 1
                 itemslist = []
-                for bucketlist in bucketlists:
+                for bucketlist in bucketlists_pagination.items:
                     items = BucketlistItem.query.filter_by(
                         bucketlist_id=bucketlist.id).all()
                     for item in items:
@@ -116,10 +133,6 @@ class BucketlistView(MethodView):
                     itemslist = []
                     results.append(obj)
                     count += 1
-                return make_response(jsonify(results)), 200
-            else:
-                response = {'message': 'No bucketlists found.'}
-                return make_response(jsonify(response)), 404
         else:
             bucketlists = Bucketlist.query.filter_by(created_by=user_id)
             if not bucketlists.all():
@@ -127,11 +140,11 @@ class BucketlistView(MethodView):
                 return make_response(jsonify(response)), 404
             else:
                 bucketlists_pagination = bucketlists.paginate(
-                    int(page), int(limit), False).items
+                    int(page), int(limit), False)
                 results = []
                 count = 1
                 itemslist = []
-                for bucketlist in bucketlists_pagination:
+                for bucketlist in bucketlists_pagination.items:
                     items = BucketlistItem.query.filter_by(
                         bucketlist_id=bucketlist.id).all()
                     for item in items:
@@ -142,6 +155,7 @@ class BucketlistView(MethodView):
                             'date_modified': item.date_modified,
                             'done': item.done}
                         itemslist.append(itemdict)
+
                     obj = {
                         'id': count,
                         'name': bucketlist.name,
@@ -152,7 +166,23 @@ class BucketlistView(MethodView):
                     itemslist = []
                     results.append(obj)
                     count += 1
-                return make_response(jsonify(results)), 200
+        if bucketlists_pagination.has_next:
+            next_page = request.url_root + 'api/v1/bucketlists' +\
+                  '?limit=' + str(limit) + \
+                  '&page=' + str(int(page) + 1)
+        else:
+            next_page = 'None'
+        if bucketlists_pagination.has_prev:
+            prev_page = request.url_root + 'api/v1/bucketlists' +\
+                  '?limit=' + str(limit) + \
+                  '&page=' + str(int(page) - 1)
+        else:
+            prev_page = 'None'
+        page_data = {'page_data': {'next_page': next_page,
+                                   'previous_page': prev_page,
+                                   'No_of_pages': bucketlists_pagination.pages}}
+        results.append(page_data)
+        return (jsonify(results))
 
 
 class BucketlistManipulationView(MethodView):
@@ -241,11 +271,16 @@ class BucketlistManipulationView(MethodView):
             response = {'message': 'Invalid bucketlist_id'}
             return make_response(jsonify(response)), 404
         try:
-            bucketlist = bucketlists[id -1 ]
+            bucketlist = bucketlists[id - 1]
         except IndexError:
             response = {'message': 'The bucketlist does not exist.'}
             return make_response(jsonify(response)), 404
         name = str(request.data.get('name'))
+        data = request.data
+        bucketlist_schema = BucketlistSchema()
+        errors = bucketlist_schema.validate(data)
+        if errors:
+            return errors, 400
         if name == bucketlist.name:
             response = {'message': 'The bucketlist cannot\
 be updated with the same data.'}
