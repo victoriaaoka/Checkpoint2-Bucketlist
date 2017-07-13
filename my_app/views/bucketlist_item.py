@@ -35,11 +35,12 @@ class BucketlistItemView(MethodView):
 
         """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
-        bucketlist = bucketlists[id - 1]
-        if not bucketlist:
+        try:
+            bucketlist = bucketlists[id - 1]
+        except IndexError:
             response = {'message': 'You do not have any bucketlists.'}
             return make_response(jsonify(response)), 404
-        else:
+        if bucketlist:
             name = str(request.data.get('name'))
             data = request.data
             if name:
