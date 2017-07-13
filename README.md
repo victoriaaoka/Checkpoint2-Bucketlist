@@ -24,7 +24,7 @@ python manage.py db init
 python manage.py db migrate
 python manage.py db upgrade
 ```
-### Launch the progam.
+### Launch the app.
 ```
 python manage.py runserver
 ```
@@ -87,5 +87,3 @@ Search bucketlists:
 Get bucketlists with pagination (page limit)
 ![Screen shot](screenshots/get_bucketlists_with_pagination.png)
 
-Create a bucketlist:
-![Screen shot](screenshots/create_bucketlist.png)
