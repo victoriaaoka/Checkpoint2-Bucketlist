@@ -12,12 +12,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     app = FlaskAPI(__name__, instance_relative_config=True)
     Swagger(app)
-    # app.config.from_object(os.getenv('DATABASE_URL'))
-    # app.config.from_pyfile('config.py')
     app.config.from_object(app_config[config_name])
-    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # app.config.get('SECRET')
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/Bucketlistdb'
     db.init_app(app)
     @app.route("/")
     def index():
