@@ -63,7 +63,7 @@ User login:
 Create a bucketlist:
 ![Screen shot](screenshots/create_bucketlist.png)
 
-Get bucketlist:
+Get bucketlists:
 ![Screen shot](screenshots/get_bucketlists.png)
 
 Update a bucketlist:
@@ -76,7 +76,7 @@ Get a bucketlist:
 ![Screen shot](screenshots/get_bucketlists2.png)
 
 Create a bucketlist item:
-![Screen shot](screenshots/create_itempng)
+![Screen shot](screenshots/create_item.png)
 
 Delete a bucketlist item:
 ![Screen shot](screenshots/delete_item.png)
