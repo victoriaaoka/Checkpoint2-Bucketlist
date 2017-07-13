@@ -44,3 +44,6 @@ Interact with the API by sending http requests using Postman.
 | `/api/v1/bucketlists/<id>/items/` | `POST` |  Create items in a bucketlist |
 | `/api/v1/bucketlists/<id>/items/<item_id>` | `DELETE`| Delete an item from a bucketlist|
 | `/api/v1/bucketlists/<id>/items/<item_id>` | `PUT`| update a bucketlist item details|
+
+### API documentation
+The API has been documented using flasgger and the online version can be found [here](https://dev-bucketlist-api.herokuapp.com/apidocs/#/).
