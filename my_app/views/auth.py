@@ -38,9 +38,9 @@ class RegistrationView(MethodView):
         password = post_data.get('password')
         if not username or not email or not password:
           return {'message': 'Please enter all the required data!'}, 400
-        user = User.query.filter_by(username=request.data['username']).first()
+        user = User.query.filter_by(username=post_data['username']).first()
         existing_email = User.query.filter_by(
-            email=request.data['email']).first()
+            email=post_data['email']).first()
         if user:
             response = {
                 'message': 'The username has been taken.'
