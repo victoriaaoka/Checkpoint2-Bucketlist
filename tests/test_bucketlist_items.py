@@ -35,6 +35,17 @@ class BucketlistItemTestCase(BaseTestCase):
         self.assertEqual(
             output['name'][0], 'Shorter than minimum length 3.')
 
+    def test_create_a_bucketlist_item_without_bucket(self):
+        """ Tests bucketlist item creation without bucket."""
+        new_bucketlist_item = {'name': ' '}
+        response = self.client().post(
+            '/api/v1/bucketlists/1/items/', data=new_bucketlist_item,
+            headers=self.get_token())
+        self.assertEqual(response.status_code, 404)
+        output = json.loads(response.data.decode())
+        self.assertEqual(
+            output['message'], 'You do not have any bucketlists.')
+
     def test_create_a_bucketlist_item_that_exists(self):
         """ Tests the creation of a bucketlist item that already exists."""
         self.client().post(
