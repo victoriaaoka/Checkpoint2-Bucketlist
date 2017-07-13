@@ -1,38 +1,20 @@
-import unittest
 import json
-from my_app.app import create_app, db
+import unittest
+from tests.base import BaseTestCase
 
-class AuthTestCase(unittest.TestCase):
+
+class AuthTestCase(BaseTestCase):
     """Test case for the authentication blueprint."""
-
-    def setUp(self):
-        """Set up test variables and app-."""
-        self.app = create_app(config_name="testing")
-        self.client = self.app.test_client
-        self.user_data = {
-            'username': 'vicky',
-            'email': 'v@gmail.com',
-            'password': 'password'
-        }
-        self.user_login = {
-            'username': 'vicky',
-            'password': 'password'
-
-        }
-        self.cntx = self.app.app_context()
-        self.cntx.push()
-        db.create_all()
-
-    def tearDown(self):
-        """reset all initialized variables."""
-        with self.app.app_context():
-            db.session.close()
-            db.drop_all()
 
     def test_successful_registration(self):
         """Test successful user registration."""
-        response = self.client().post('/api/v1/auth/register',
-            data=self.user_data)
+        new_user = {
+            'email': 'vicky@gmail.com',
+            'username': ' vicky',
+            'password': ' password'
+        }
+        response = self.client().post(
+            '/api/v1/auth/register', data=new_user)
         self.assertEqual(response.status_code, 201)
 
     def test_register_without_username_or_password(self):
@@ -42,11 +24,15 @@ class AuthTestCase(unittest.TestCase):
             'username': ' ',
             'password': ' '
         }
-        response = self.client().post('/api/v1/auth/register', data=json.dumps(new_user))
+        response = self.client().post(
+            '/api/v1/auth/register', data=json.dumps(new_user))
         self.assertEqual(response.status_code, 400)
 
     def test_register_with_username_not_string(self):
-        """Test the registration of a user with a username that is not string."""
+        """
+        Test the registration of a user with a
+        username that is not string.
+        """
         new_user = {
             'email': 'vicky@gmail.com',
             'username': '@#$$54678',
@@ -63,7 +49,8 @@ class AuthTestCase(unittest.TestCase):
             'username': ' vicky',
             'password': ' password'
         }
-        response = self.client().post('/api/v1/auth/register', data=json.dumps(new_user))
+        response = self.client().post(
+            '/api/v1/auth/register', data=json.dumps(new_user))
         self.assertEqual(response.status_code, 400)
 
     def test_register_with_short_password(self):
@@ -73,25 +60,28 @@ class AuthTestCase(unittest.TestCase):
             'username': ' vicky',
             'password': ' pas'
         }
-        response = self.client().post('api/v1/auth/register', data=json.dumps(new_user))
+        response = self.client().post(
+            'api/v1/auth/register', data=json.dumps(new_user))
         self.assertEqual(response.status_code, 400)
 
     def test_registering_a_user_who_already_exists(self):
         """Test that a user cannot be registered twice."""
         self.client().post('/api/v1/auth/register', data=self.user_data)
-        response = self.client().post('/api/v1/auth/register', data=self.user_data)
+        response = self.client().post(
+            '/api/v1/auth/register', data=self.user_data)
         self.assertEqual(response.status_code, 409)
         output = json.loads(response.data.decode())
         self.assertEqual(
-            output['message'], "The username has been taken.")
+            output['message'], 'The username has been taken.')
 
     def test_registered_user_can_login(self):
         """Test registered user can login successfully."""
         self.client().post('/api/v1/auth/register', data=self.user_data)
-        response = self.client().post('/api/v1/auth/login', data=self.user_login)
+        response = self.client().post(
+            '/api/v1/auth/login', data=self.user_login)
         self.assertEqual(response.status_code, 200)
         output = json.loads(response.data.decode())
-        self.assertEqual(output['message'], "You logged in successfully.")
+        self.assertEqual(output['message'], 'You logged in successfully.')
         self.assertTrue(output['access_token'])
 
     def test_non_registered_user_login(self):
@@ -101,12 +91,13 @@ class AuthTestCase(unittest.TestCase):
             'password': 'password'
         }
 
-        response = self.client().post('/api/v1/auth/login',
-            data=not_registered)
+        response = self.client().post(
+            '/api/v1/auth/login', data=not_registered)
         self.assertEqual(response.status_code, 401)
         output = json.loads(response.data.decode())
         self.assertEqual(
-            output["message"], "Invalid username or password, Please try again.")
+            output['message'], 'Invalid username \
+or password, Please try again.')
 
     def test_login_without_username_or_password(self):
         """Test user login without username and password."""
