@@ -48,11 +48,12 @@ Interact with the API by sending http requests using Postman.
 ### API documentation
 The API has been documented using flasgger and the online version can be found [here](https://dev-bucketlist-api.herokuapp.com/apidocs/#/).
 
-###Screenshots
-The screenshot below shows the documented API as hosted on heroku.
+### Screenshots
+
+#### The screenshot below shows the documented API as hosted on heroku.
 ![Screen shot](screenshots/heroku.png)
 
-The screenshots below show sample requests.
+#### The screenshots below show sample requests.
 User registration:
 ![Screen shot](screenshots/register.png)
 
