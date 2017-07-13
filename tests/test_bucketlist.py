@@ -86,7 +86,7 @@ class BucketlistTestCase(BaseTestCase):
             '/api/v1/bucketlists/', data={'name': 'Adventure'},
             headers=self.get_token())
         response = self.client().put(
-            '/api/v1/bucketlists/1', data={'name': 'Go for adventure!'},
+            '/api/v1/bucketlists/1', data={'name': 'Go for adventure'},
             headers=self.get_token())
         self.assertEqual(response.status_code, 200)
         result = self.client().get(
@@ -166,7 +166,7 @@ class BucketlistTestCase(BaseTestCase):
             '/api/v1/bucketlists/?limit=1',
             headers=self.get_token())
         output = json.loads(response.data.decode())
-        self.assertEqual(1, len(output))
+        self.assertEqual(2, len(output))
 
 
 if __name__ == '__main__':
