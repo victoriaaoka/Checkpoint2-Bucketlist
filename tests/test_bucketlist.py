@@ -1,5 +1,6 @@
 import unittest
 import os
+import json
 import sys
 sys.path.append('../')
 from tests.base import BaseTestCase
