@@ -81,16 +81,16 @@ class BucketlistView(MethodView):
          200:
            description: Bucketlists retrieved.
         """
-        limit = request.args.get("limit", 20)
-        page = request.args.get("page", 1)
-        q = request.args.get("q", None)
+        limit = request.args.get('limit', 20)
+        page = request.args.get('page', 1)
+        q = request.args.get('q', None)
 
         if q:
             bucketlists = Bucketlist.query.filter(
-                Bucketlist.name.ilike("%" + q + "%"))
+                Bucketlist.name.ilike('%' + q + '%'))
             if bucketlists.all():
-                bucketlists_pagination = bucketlists.paginate(int(page),
-                                                      int(limit), False)
+                bucketlists_pagination = bucketlists.paginate(
+                    int(page), int(limit), False)
                 results = []
                 count = 1
                 itemslist = []
@@ -126,8 +126,8 @@ class BucketlistView(MethodView):
                 response = {'message': 'You do not have any bucketlists.'}
                 return make_response(jsonify(response)), 404
             else:
-                bucketlists_pagination = bucketlists.paginate(int(page),
-                    int(limit), False).items
+                bucketlists_pagination = bucketlists.paginate(
+                    int(page), int(limit), False).items
                 results = []
                 count = 1
                 itemslist = []
@@ -181,7 +181,7 @@ class BucketlistManipulationView(MethodView):
         """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         if not bucketlists:
-            response = {"message": "You do not have any bucketlists."}
+            response = {'message': 'You do not have any bucketlists.'}
             return make_response(jsonify(response)), 404
         else:
             itemslist = []
@@ -207,10 +207,10 @@ class BucketlistManipulationView(MethodView):
                     }
                     return make_response(jsonify(response)), 200
                 else:
-                    response = {"message": "Invalid id.{}".format(id)}
+                    response = {'message': 'Invalid id.{}'.format(id)}
                     return make_response(jsonify(response)), 404
             except IndexError:
-                response = {"message": "The bucketlist does not exist."}
+                response = {'message': 'The bucketlist does not exist.'}
                 return make_response(jsonify(response)), 404
 
     def put(self, id, user_id):
@@ -238,17 +238,17 @@ class BucketlistManipulationView(MethodView):
         """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id).all()
         if id < 1:
-            response = {"message": "Invalid bucketlist_id"}
+            response = {'message': 'Invalid bucketlist_id'}
             return make_response(jsonify(response)), 404
         try:
             bucketlist = bucketlists[id -1 ]
         except IndexError:
-            response = {"message": "The bucketlist does not exist."}
+            response = {'message': 'The bucketlist does not exist.'}
             return make_response(jsonify(response)), 404
         name = str(request.data.get('name'))
         if name == bucketlist.name:
-            response = {"message": "The bucketlist cannot\
-be updated with the same data."}
+            response = {'message': 'The bucketlist cannot\
+be updated with the same data.'}
             return make_response(jsonify(response)), 409
         else:
             bucketlist.name = name
@@ -260,7 +260,7 @@ be updated with the same data."}
                 'date_modified': bucketlist.date_modified,
             }
             response.update(
-                {"message": "Bucketlist updated successfully."})
+                {'message': 'Bucketlist updated successfully.'})
             return make_response(jsonify(response)), 200
 
     def delete(self, id, user_id):
@@ -285,23 +285,23 @@ be updated with the same data."}
         """
         bucketlists = Bucketlist.query.filter_by(created_by=user_id)
         if id < 1:
-            response = {"message": "Invalid bucketlist_id"}
+            response = {'message': 'Invalid bucketlist_id'}
             return make_response(jsonify(response)), 404
         try:
-            bucketlist = bucketlists[id -1 ]
+            bucketlist = bucketlists[id - 1]
             bucketlist.delete()
-            response = {"message": "Bucketlist deleted successfully."}
+            response = {'message': 'Bucketlist deleted successfully.'}
             return make_response(jsonify(response)), 200
         except IndexError:
-            response = {"message": "The bucketlist does not exist."}
+            response = {'message': 'The bucketlist does not exist.'}
             return make_response(jsonify(response)), 404
 
 # API resource
-bucketlist_view = BucketlistView.as_view("bucketlist_view")
-manipulation_view = BucketlistManipulationView.as_view("manipulation_view")
-
-bucketlist_blueprint.add_url_rule("/bucketlists/", view_func=bucketlist_view,
-                                  methods=["POST", "GET"])
+bucketlist_view = BucketlistView.as_view('bucketlist_view')
+manipulation_view = BucketlistManipulationView.as_view('manipulation_view')
+# Define the rule for the urls and then add the rule to the blueprint.
+bucketlist_blueprint.add_url_rule('/bucketlists/', view_func=bucketlist_view,
+                                  methods=['POST', 'GET'])
 bucketlist_blueprint.add_url_rule(
-    "/bucketlists/<int:id>", view_func=manipulation_view,
+    '/bucketlists/<int:id>', view_func=manipulation_view,
     methods=['DELETE', 'GET', 'PUT'])
