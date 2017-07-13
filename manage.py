@@ -24,12 +24,12 @@ def runtests():
 @manager.command
 def initdb():
         db.create_all()
-        print("All tables created.")
+        print('All tables created.')
 
 @manager.command
 def dropdb():
         db.drop_all()
-        print("All tables deleted.")
+        print('All tables deleted.')
 
 if __name__ == '__main__':
     manager.run()
