@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist.svg?branch=master)](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist)
+## Bucketlist API <br />[![Build Status](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist.svg?branch=master)](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist)
 [![Coverage Status](https://coveralls.io/repos/github/victoriaaoka/Checkpoint2-Bucketlist/badge.svg?branch=master)](https://coveralls.io/github/victoriaaoka/Checkpoint2-Bucketlist?branch=master)
 
-# Bucketlist API
+## Introduction
 According to Merriam-Webster Dictionary,  a Bucket List is a list of things that one has not done before but wants to do before dying.
 
 Bucketlist API is an online flask API that can help users to create, edit and track their bucketlists.
