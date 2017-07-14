@@ -20,6 +20,8 @@ class BucketlistTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         output = json.loads(response.data.decode())
         self.assertIn('Vacation', str(output['name']))
+        self.assertEqual(
+            output['message'], 'Bucketlist created successfully!')
 
     def test_create_bucketlist_with_name_not_string(self):
         """Test create a bucketlist with a name that is not a string."""
