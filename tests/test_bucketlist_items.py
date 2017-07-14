@@ -112,6 +112,24 @@ class BucketlistItemTestCase(BaseTestCase):
             'name': 'Go to Tokyo'}, headers=self.get_token())
         self.assertEqual(response.status_code, 409)
 
+    def test_update_a_bucketlist_item_in_a_non_existent_bucketlist(self):
+        """
+        Tests that a bucketlist item that does not belong to any bucketlist
+        cannot be updated .
+        """
+        self.client().post(
+            '/api/v1/bucketlists/', data=self.bucketlist,
+            headers=self.get_token())
+        self.client().post(
+            '/api/v1/bucketlists/1/items/', data=self.bucketlist_item,
+            headers=self.get_token())
+        response = self.client().put('/api/v1/bucketlists/12/items/1', data={
+            'name': 'Go to Tokyo'}, headers=self.get_token())
+        self.assertEqual(response.status_code, 404)
+        output = json.loads(response.data.decode())
+        self.assertEqual(
+            output['message'], 'The bucketlist does not exist.')
+
     def test_successful_bucketlist_item_deletion(self):
         """Test that the API can delete an existing bucketlist."""
         self.client().post('/api/v1/bucketlists/', data={
