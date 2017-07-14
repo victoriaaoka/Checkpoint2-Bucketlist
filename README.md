@@ -1,4 +1,4 @@
-## Bucketlist API <br />[![Build Status](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist.svg?branch=tasks)](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist) [![Coverage Status](https://coveralls.io/repos/github/victoriaaoka/Checkpoint2-Bucketlist/badge.svg?branch=tasks)](https://coveralls.io/github/victoriaaoka/Checkpoint2-Bucketlist?branch=tasks)
+## Bucketlist API <br />[![Build Status](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist.svg?branch=tasks)](https://travis-ci.org/victoriaaoka/Checkpoint2-Bucketlist)[![Coverage Status](https://coveralls.io/repos/github/victoriaaoka/Checkpoint2-Bucketlist/badge.svg?branch=tasks)](https://coveralls.io/github/victoriaaoka/Checkpoint2-Bucketlist?branch=tasks)
 
 ### Introduction
 According to Merriam-Webster Dictionary,  a Bucket List is a list of things that one has not done before but wants to do before dying.
