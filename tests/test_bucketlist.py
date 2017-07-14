@@ -30,14 +30,23 @@ class BucketlistTestCase(BaseTestCase):
         self.assertEqual(
             output['name'][0], 'Invalid characters')
 
-    def test_create_bucketlist_without_name(self):
+    def test_create_bucketlist_with_a_short_name(self):
         """Test create a bucketlist without a name."""
         response = self.client().post('/api/v1/bucketlists/', data={
-            'name': ' '}, headers=self.get_token())
+            'name': 'a'}, headers=self.get_token())
         self.assertEqual(response.status_code, 400)
         output = json.loads(response.data.decode())
         self.assertEqual(
             output['name'][0], 'Shorter than minimum length 3.')
+
+    def test_create_bucketlist_without_name(self):
+        """Test create a bucketlist without a name."""
+        response = self.client().post('/api/v1/bucketlists/', data={
+            'name': ''}, headers=self.get_token())
+        self.assertEqual(response.status_code, 400)
+        output = json.loads(response.data.decode())
+        self.assertEqual(
+            output['message'], 'Bucketlist name should be provided.')
 
     def test_create_bucketlist_that_already_exists(self):
         """Test create a bucketlist that already exists."""
