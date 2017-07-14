@@ -35,7 +35,7 @@ class AuthTestCase(BaseTestCase):
         """
         new_user = {
             'email': 'vicky@gmail.com',
-            'username': '@#$$54678',
+            'username': '@$$54678',
             'password': 'password'
         }
         response = self.client().post('/api/v1/auth/register', data=json.dumps(
