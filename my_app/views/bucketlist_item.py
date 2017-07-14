@@ -148,7 +148,7 @@ updated successfully.'})
 
     def delete(self, id, item_id, user_id):
         """
-       Deletes a bucketlist.
+       Deletes a bucketlist item.
        ---
        tags:
             - The Bucketlist Items API
