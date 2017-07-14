@@ -21,9 +21,9 @@ class BucketlistItemTestCase(BaseTestCase):
         output = json.loads(response.data.decode())
         self.assertIn('Tokyo', output['name'])
 
-    def test_create_a_bucketlist_item_without_name(self):
-        """ Tests endpoint can create new bucketlist item."""
-        new_bucketlist_item = {'name': ' '}
+    def test_create_a_bucketlist_item_with_short_name(self):
+        """ Test bucketlist item creation with short name."""
+        new_bucketlist_item = {'name': 'a'}
         self.client().post(
             '/api/v1/bucketlists/', data=self.bucketlist,
             headers=self.get_token())
@@ -34,6 +34,20 @@ class BucketlistItemTestCase(BaseTestCase):
         output = json.loads(response.data.decode())
         self.assertEqual(
             output['name'][0], 'Shorter than minimum length 3.')
+
+    def test_create_a_bucketlist_item_without_name(self):
+        """ Test create bucketlist without name."""
+        new_bucketlist_item = {'name': ''}
+        self.client().post(
+            '/api/v1/bucketlists/', data=self.bucketlist,
+            headers=self.get_token())
+        response = self.client().post(
+            '/api/v1/bucketlists/1/items/', data=new_bucketlist_item,
+            headers=self.get_token())
+        self.assertEqual(response.status_code, 400)
+        output = json.loads(response.data.decode())
+        self.assertEqual(
+            output['message'], 'Please enter bucketlist item name.')
 
     def test_create_a_bucketlist_item_without_bucket(self):
         """ Tests bucketlist item creation without bucket."""
