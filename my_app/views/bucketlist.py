@@ -68,7 +68,7 @@ class BucketlistView(MethodView):
 
     def get(self, user_id):
         """
-       Retrieve all bucketlists.
+       Retrieves all bucketlists.
        ---
        tags:
             - The Bucketlist API
@@ -190,7 +190,7 @@ class BucketlistManipulationView(MethodView):
 
     def get(self, id, user_id):
         """
-       Retrieve a single bucketlist.
+       Retrieves a single bucketlist.
        ---
        tags:
             - The Bucketlist API
@@ -245,7 +245,7 @@ class BucketlistManipulationView(MethodView):
 
     def put(self, id, user_id):
         """
-       Update a bucketlist.
+       Updates a bucketlist.
        ---
        tags:
             - The Bucketlist API
