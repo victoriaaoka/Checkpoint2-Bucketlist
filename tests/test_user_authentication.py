@@ -105,3 +105,18 @@ or password, Please try again.')
             'username': ' ', 'password': ''})
         self.assertEqual(response.status_code, 400)
         output = json.loads(response.data.decode())
+
+    def test_register_user_with_existing_email(self):
+        """Test user registration with existing email."""
+        self.client().post('/api/v1/auth/register', data=self.user_data)
+        new_user = {
+            'email': 'v@gmail.com',
+            'username': ' victor',
+            'password': ' password'
+        }
+        response = self.client().post(
+            'api/v1/auth/register', data=new_user)
+        self.assertEqual(response.status_code, 409)
+        output = json.loads(response.data.decode())
+        self.assertEqual(
+            output['message'], 'The email exists please login.')
