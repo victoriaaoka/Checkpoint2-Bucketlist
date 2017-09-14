@@ -12,14 +12,14 @@ jobs:
       - image: circleci/python:3.6.1
         environment:
          APP_SETTINGS: testing
-         DATABASE_URL: postgresql://circleci@localhost/circlecidb
+        #  DATABASE_URL: postgresql://circleci@localhost/circlecidb
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: circleci/postgres:9.6
         environment:
-          POSTGRES_DB: circlecidb
+          POSTGRES_DB: test_db
           POSTGRES_USER: circleci
           POSTGRES_PASSWORD: ''
 
