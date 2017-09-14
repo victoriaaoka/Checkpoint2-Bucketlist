@@ -19,8 +19,8 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: circleci/postgres:9.6
         environment:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: ubuntu
+          POSTGRES_DB: ubuntudb
+          POSTGRES_USER: circleci
           POSTGRES_PASSWORD: ''
 
     working_directory: ~/repo
@@ -37,7 +37,7 @@ jobs:
           name: show dbname
           command: |
             whoami
-            cat "$(find / -name "*pg_hba*")"
+            # cat "$(find / -name "*pg_hba*")"
 
       - run:
           name: install dependencies
