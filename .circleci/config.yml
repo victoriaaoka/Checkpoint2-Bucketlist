@@ -33,6 +33,8 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
   test:
+    requires:
+      - build
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
