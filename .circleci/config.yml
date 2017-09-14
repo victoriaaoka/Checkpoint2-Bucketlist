@@ -68,6 +68,7 @@ jobs:
            count=0
            while [ $count -lt 12 ] ; do
               if exec 10<>/dev/tcp/127.0.0.1/5432; then
+                echo "Hey, postgres is up"
                 break
               fi
               sleep 5
