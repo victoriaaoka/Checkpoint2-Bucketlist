@@ -20,7 +20,7 @@ jobs:
       - image: circleci/postgres:9.6
         environment:
           POSTGRES_DB: test_db
-          POSTGRES_USER: circleci
+          POSTGRES_USER: ubuntu
           POSTGRES_PASSWORD: ''
 
     working_directory: ~/repo
