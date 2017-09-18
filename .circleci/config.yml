@@ -75,7 +75,7 @@ jobs:
               count=$((count + 1))
            done
            if [ $count -eq 12 ]; then
-             echo "Postgress is still down!"
+             echo "Postgres is still down!"
              exit 1
            fi
       # run tests!
@@ -96,3 +96,7 @@ workflows:
       - test:
           requires:
             - build
+      - deploy:
+          requires:
+            - build
+            - test
