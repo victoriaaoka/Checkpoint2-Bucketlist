@@ -89,8 +89,10 @@ jobs:
           path: reports
           destination: reports
   deployment:
-    staging:
+    steps:
       branch: tasks
+      commands:
+        - ./deploy_prod.sh
 
 workflows:
   version: 2
