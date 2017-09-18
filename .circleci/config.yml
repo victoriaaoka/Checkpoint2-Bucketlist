@@ -88,12 +88,6 @@ jobs:
       - store_artifacts:
           path: reports
           destination: reports
-  deployment:
-    steps:
-      branch: tasks
-      commands:
-        - ./deploy_prod.sh
-
 workflows:
   version: 2
   build_and_test:
@@ -102,7 +96,3 @@ workflows:
       - test:
           requires:
             - build
-      - deploy:
-          requires:
-            - build
-            - test
