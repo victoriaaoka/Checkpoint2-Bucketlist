@@ -166,19 +166,19 @@ workflows:
       - no-bump:
           type: approval
           requires:
-            - tests
+            - test
       - bump-patch:
           type: approval
           requires:
-            - tests
+            - test
       - bump-minor:
           type: approval
           requires:
-            - tests
+            - test
       - bump-major:
           type: approval
           requires:
-            - tests
+            - test
       - deployment:
           requires:
             - tests
