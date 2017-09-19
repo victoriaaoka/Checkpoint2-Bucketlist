@@ -88,6 +88,73 @@ jobs:
       - store_artifacts:
           path: reports
           destination: reports
+
+  no-bump:
+    docker:
+      - image: circleci/python:3.6.1
+        environment:
+          BUMP_LEVEL: none
+
+    working_directory: ~/repo
+    steps:
+      - run: exit 0
+
+  bump-patch:
+    docker:
+      - image: circleci/python:3.6.1
+        environment:
+          BUMP_LEVEL: patch
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run: bash bump-version.sh
+
+  bump-minor:
+    docker:
+      - image: circleci/python:3.6.1
+        environment:
+          BUMP_LEVEL: minor
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run: bash bump-version.sh
+
+  bump-major:
+    docker:
+      - image: circleci/python:3.6.1
+        environment:
+          BUMP_LEVEL: major
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run: bash ./bump-version.sh
+
+  deployment:
+    docker:
+      - image: circleci/python:3.6.1
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run: bash .circleci/setup-heroku.sh
+      - add_ssh_keys:
+          fingerprints:
+            - "39:79:40:24:11:64:bc:6f:e8:b4:be:7a:18:c5:b6:84"
+      - deploy:
+          name: Deploy Master to Heroku
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "tasks" ]; then
+              git push heroku tasks:master
+              heroku run python manage.py db upgrade
+              heroku restart
+            fi
 workflows:
   version: 2
   build_and_test:
@@ -96,3 +163,26 @@ workflows:
       - test:
           requires:
             - build
+      - no-bump:
+          type: approval
+          requires:
+            - tests
+      - bump-patch:
+          type: approval
+          requires:
+            - tests
+      - bump-minor:
+          type: approval
+          requires:
+            - tests
+      - bump-major:
+          type: approval
+          requires:
+            - tests
+      - deployment:
+          requires:
+            - tests
+            - no-bump
+            - bump-patch
+            - bump-minor
+            - bump-major
