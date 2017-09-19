@@ -181,7 +181,7 @@ workflows:
             - test
       - deployment:
           requires:
-            - tests
+            - test
             - no-bump
             - bump-patch
             - bump-minor
