@@ -3,6 +3,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
+
 version: 2
 jobs:
   build:
@@ -167,24 +168,32 @@ workflows:
   build_and_test:
     jobs:
       - build
+
       - test:
           requires:
             - build
+
       - bump-version-patch:
           type: approval
+
       - bump-version-minor:
           type: approval
+
       - bump-version-major:
           type: approval
+
       - bump-patch:
           requires:
             - bump-version-patch
+
       - bump-minor:
           requires:
             - bump-version-minor
+
       - bump-major:
           requires:
             - bump-version-major
+            
       - deployment:
           requires:
             - test
