@@ -89,19 +89,21 @@ jobs:
           path: reports
           destination: reports
 
-  no-bump:
+  bump-version-patch: &bump-version-config
     docker:
-      - image: circleci/python:3.6.1
-        environment:
-          BUMP_LEVEL: none
+      - image: circleci/python:2.7.13
 
     working_directory: ~/repo
+
     steps:
       - run: exit 0
-
-  bump-patch:
+  bump-version-minor:
+    <<: *bump-version-config
+  bump-version-major:
+    <<: *bump-version-config
+  bump-patch: &bump-config
     docker:
-      - image: circleci/python:3.6.1
+      - image: circleci/python:2.7.13
         environment:
           BUMP_LEVEL: patch
 
@@ -109,31 +111,36 @@ jobs:
 
     steps:
       - checkout
-      - run: bash bump-version.sh
-
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          - v1-dependencies-
+      - run:
+          name: Create bump config
+          command: |
+            source venv/bin/activate
+            git config --global user.email "ci@circleci"
+            git config --global user.name "Circle CI"
+            bumpversion --message "[skip ci] Bump version: {current_version} -> {new_version}" $BUMP_LEVEL
+      - add_ssh_keys:
+          fingerprints:
+            - "70:20:36:38:3b:3a:b4:a5:c3:08:7e:2e:54:04:a6:1c"
+      - run:
+          name: Push version commit
+          command: |
+            git push --tags origin master --force
   bump-minor:
+    <<: *bump-config
     docker:
-      - image: circleci/python:3.6.1
+      - image: circleci/python:2.7.13
         environment:
           BUMP_LEVEL: minor
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-      - run: bash bump-version.sh
-
   bump-major:
+    <<: *bump-config
     docker:
-      - image: circleci/python:3.6.1
+      - image: circleci/python:2.7.13
         environment:
           BUMP_LEVEL: major
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-      - run: bash ./bump-version.sh
 
   deployment:
     docker:
@@ -163,26 +170,21 @@ workflows:
       - test:
           requires:
             - build
-      - no-bump:
+      - bump-version-patch:
           type: approval
-          requires:
-            - test
+      - bump-version-minor:
+          type: approval
+      - bump-version-major:
+          type: approval
       - bump-patch:
-          type: approval
           requires:
-            - test
+            - bump-version-patch
       - bump-minor:
-          type: approval
           requires:
-            - test
+            - bump-version-minor
       - bump-major:
-          type: approval
           requires:
-            - test
+            - bump-version-major
       - deployment:
           requires:
             - test
-            - no-bump
-            - bump-patch
-            - bump-minor
-            - bump-major
