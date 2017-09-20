@@ -155,7 +155,7 @@ jobs:
           fingerprints:
             - "39:79:40:24:11:64:bc:6f:e8:b4:be:7a:18:c5:b6:84"
       - deploy:
-          name: Deploy Master to Heroku
+          name: Deploy Tasks branch to Heroku
           command: |
             if [ "${CIRCLE_BRANCH}" == "tasks" ]; then
               git push heroku tasks:master
