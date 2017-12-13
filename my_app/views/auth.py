@@ -6,7 +6,9 @@ from my_app.schema import UserRegistrationSchema, UserLoginSchema
 
 
 class RegistrationView(MethodView):
-    """This class registers a new user."""
+    """
+    This class registers a new user.
+    """
 
     def post(self):
         """
