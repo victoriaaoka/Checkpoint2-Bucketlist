@@ -86,7 +86,7 @@ class LoginView(MethodView):
 
     def post(self):
         """
-       Logs in a user.
+       Logs in a registered user.
        ---
        tags:
             - The Users API
